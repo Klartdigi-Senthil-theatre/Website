@@ -100,7 +100,7 @@ const SeatSelection = () => {
           {/* Right Side - Booking Summary */}
           <div className="lg:w-1/3">
             <motion.div
-              className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-[40vh] lg:h-[84vh] flex flex-col"
+              className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-full lg:h-[84vh] flex flex-col"
               initial={{ y: 50 }}
               animate={{ y: 0 }}
               whileHover={{ scale: 1.01 }}

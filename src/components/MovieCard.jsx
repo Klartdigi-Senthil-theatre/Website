@@ -33,7 +33,7 @@ const MovieCard = ({ movie, onBookNow, selectedDate }) => {
         </div>
 
         {/* Showtimes */}
-        <div className="mt-4">
+        <div>
           <h4 className="text-md font-semibold text-orange-800 mb-2">
             {formattedDate}
           </h4>

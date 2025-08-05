@@ -37,7 +37,7 @@ const Home = () => {
       title: "Coolie",
       genre: "UA13+ • Action",
       language: "Tamil",
-      poster: "src/assets/images/movieFolder/coolie.jpg",
+      poster: "public/assets/images/movieFolder/coolie.jpg",
       timings: ["10:00 AM", "2:00 PM", "6:00 PM", "10:00 PM"],
     },
   ];

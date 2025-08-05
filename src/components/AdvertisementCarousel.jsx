@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 
 const AdvertisementCarousel = () => {
   const ads = [
-    "src/assets/images/advertisements/adv1.jpg",
-    "src/assets/images/advertisements/adv4.jpg",
-    "src/assets/images/advertisements/adv2.jpg",
-    "src/assets/images/advertisements/adv3.jpg",
+    "public/assets/images/advertisements/adv1.jpg",
+    "public/assets/images/advertisements/adv4.jpg",
+    "public/assets/images/advertisements/adv2.jpg",
+    "public/assets/images/advertisements/adv3.jpg",
   ];
   const [currentAd, setCurrentAd] = useState(0);
 
@@ -20,7 +20,7 @@ const AdvertisementCarousel = () => {
 
   return (
     <div className="flex justify-center px-4 py-6">
-      <div className="relative w-full max-w-8xl h-64 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-100">
+      <div className="relative w-full max-w-7xl h-64 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-100">
         {ads.map((ad, index) => (
           <motion.div
             key={index}
@@ -34,7 +34,7 @@ const AdvertisementCarousel = () => {
             <img
               src={ad}
               alt={`Advertisement ${index + 1}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-fill"
             />
           </motion.div>
         ))}

@@ -13,7 +13,7 @@ import {
 import Lottie from "lottie-react";
 import { notify } from "../components/Notification";
 import NavigationButtons from "../components/NavigationButtons";
-import celebrationAnimation from "../assets/images/json/lottie.json";
+import celebrationAnimation from "../../public/assets/images/json/lottie.json";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 
@@ -247,7 +247,7 @@ const TicketPage = () => {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8"
+          className="text-center mb-4"
         >
           <div className="flex justify-center items-center gap-1">
             <div className="w-10 h-10">
@@ -257,7 +257,7 @@ const TicketPage = () => {
                 autoplay={true}
               />
             </div>
-            <h1 className="text-3xl font-semibold text-gray-800">
+            <h1 className="text-2xl font-semibold text-gray-800">
               Booking Confirmed!
             </h1>
           </div>
@@ -271,7 +271,7 @@ const TicketPage = () => {
               variants={ticketVariants}
               initial="hidden"
               animate="visible"
-              className="relative mb-4"
+              className="relative mb-2"
               id="ticket-container"
             >
               {/* Main Ticket */}
@@ -287,7 +287,7 @@ const TicketPage = () => {
                   >
                     <motion.div
                       variants={fadeInUp}
-                      className="flex justify-between items-start mb-2"
+                      className="flex justify-between items-start"
                     >
                       <div>
                         <h2 className="text-xl font-bold mb-1">

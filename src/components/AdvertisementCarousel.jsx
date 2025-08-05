@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 
 const AdvertisementCarousel = () => {
   const ads = [
-    "public/assets/images/advertisements/adv1.jpg",
-    "public/assets/images/advertisements/adv4.jpg",
-    "public/assets/images/advertisements/adv2.jpg",
-    "public/assets/images/advertisements/adv3.jpg",
+    "/assets/images/advertisements/adv1.jpg",
+    "/assets/images/advertisements/adv4.jpg",
+    "/assets/images/advertisements/adv2.jpg",
+    "/assets/images/advertisements/adv3.jpg",
   ];
   const [currentAd, setCurrentAd] = useState(0);
 

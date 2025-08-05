@@ -13,10 +13,9 @@ import {
 import Lottie from "lottie-react";
 import { notify } from "../components/Notification";
 import NavigationButtons from "../components/NavigationButtons";
-import celebrationAnimation from "../../public/assets/images/json/lottie.json";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
-
+import celebrationAnimation from "../assets/lottie.json";
 const TicketPage = () => {
   const location = useLocation();
   const navigate = useNavigate();

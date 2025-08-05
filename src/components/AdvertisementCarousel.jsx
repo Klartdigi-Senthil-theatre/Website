@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 
 const AdvertisementCarousel = () => {
   const ads = [
-    "/assets/images/advertisements/adv1.jpg",
-    "/assets/images/advertisements/adv4.jpg",
-    "/assets/images/advertisements/adv2.jpg",
-    "/assets/images/advertisements/adv3.jpg",
+    "/adv1.jpg",
+    "/adv4.jpg",
+    "/adv2.jpg",
+    "/adv3.jpg",
   ];
   const [currentAd, setCurrentAd] = useState(0);
 
@@ -45,9 +45,8 @@ const AdvertisementCarousel = () => {
             <motion.button
               key={index}
               onClick={() => setCurrentAd(index)}
-              className={`w-3 h-3 rounded-full ${
-                index === currentAd ? "bg-white" : "bg-gray-300"
-              }`}
+              className={`w-3 h-3 rounded-full ${index === currentAd ? "bg-white" : "bg-gray-300"
+                }`}
               whileHover={{ scale: 1.2 }}
             />
           ))}

@@ -98,9 +98,9 @@ const SeatSelection = () => {
           </div>
 
           {/* Right Side - Booking Summary */}
-          <div className="lg:w-1/3">
+          <div className="lg:w-1/3 mb-4">
             <motion.div
-              className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-full lg:h-[84vh] flex flex-col"
+              className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-[50vh] lg:h-[84vh] flex flex-col"
               initial={{ y: 50 }}
               animate={{ y: 0 }}
               whileHover={{ scale: 1.01 }}
@@ -118,11 +118,25 @@ const SeatSelection = () => {
                   <span className="ml-2 text-orange-600 block">{timing}</span>
                 </div>
                 <div>
-                  <span className="text-gray-600 font-semibold">Seats:</span>
-                  <span className="ml-2 text-orange-600 block">
-                    {selectedSeats.join(", ") || "None selected"}
+          <span className="text-gray-600 font-semibold">Seats:</span>
+          {/* Scrollable seats section only */}
+          <div className="ml-2 text-orange-600 max-h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-gray-100 pr-1">
+            {selectedSeats.length > 0 ? (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {selectedSeats.map((seat, index) => (
+                  <span
+                    key={index}
+                    className="inline-block bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm"
+                  >
+                    {seat}
                   </span>
-                </div>
+                ))}
+              </div>
+            ) : (
+              <span className="block">None selected</span>
+            )}
+          </div>
+        </div>
                 <div>
                   <span className="text-gray-600 font-semibold">
                     Price per seat:

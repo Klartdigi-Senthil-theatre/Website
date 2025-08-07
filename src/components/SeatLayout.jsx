@@ -81,7 +81,7 @@ const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
               <div className={`flex gap-1 ${row.centerAlign ? "pl-9" : ""}`}>
                 {/* Entry indicator for L row */}
                 {row.hasEntry && (
-                  <div className="w-7 h-6 rotate-270 flex items-center justify-center rounded text-[8px] tracking-wide font-bold">
+                  <div className="w-7 h-6 rotate-90 flex items-center justify-center rounded text-[8px] tracking-wide font-bold">
                     ENTRY
                   </div>
                 )}
@@ -94,7 +94,7 @@ const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
                       key={seat.id}
                       className={`relative w-6 h-6 flex justify-center items-center rounded-t-xl rounded-b-sm font-bold text-xs border-2 transition-all duration-200 shadow-sm ${
                         isBooked
-                          ? "bg-gradient-to-b from-red-500 to-red-600 text-white border-red-700 cursor-not-allowed"
+                          ? "bg-gradient-to-b from-gray-300 to-gray-400 text-white border-gray-500 cursor-not-allowed"
                           : isSelected
                           ? "bg-gradient-to-b from-orange-400 to-orange-600 text-white border-orange-700 shadow-lg scale-105"
                           : "bg-gradient-to-b from-orange-100 to-orange-200 text-orange-800 border-orange-300 hover:border-orange-500 hover:from-orange-200 hover:to-orange-300 hover:shadow-md"
@@ -114,7 +114,7 @@ const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
                       <div
                         className={`absolute bottom-0 left-1 right-1 h-2 rounded-sm ${
                           isBooked
-                            ? "bg-red-700"
+                            ? "bg-gray-500"
                             : isSelected
                             ? "bg-orange-700"
                             : "bg-orange-300"
@@ -142,7 +142,7 @@ const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
                       key={seat.id}
                       className={`relative w-6 h-6 flex justify-center items-center rounded-t-xl rounded-b-sm font-bold text-xs border-2 transition-all duration-200 shadow-sm ${
                         isBooked
-                          ? "bg-gradient-to-b from-red-500 to-red-600 text-white border-red-700 cursor-not-allowed"
+                          ? "bg-gradient-to-b from-gray-300 to-gray-400 text-white border-gray-500 cursor-not-allowed"
                           : isSelected
                           ? "bg-gradient-to-b from-orange-400 to-orange-600 text-white border-orange-700 shadow-lg scale-105"
                           : "bg-gradient-to-b from-orange-100 to-orange-200 text-orange-800 border-orange-300 hover:border-orange-500 hover:from-orange-200 hover:to-orange-300 hover:shadow-md"
@@ -166,7 +166,7 @@ const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
                       <div
                         className={`absolute bottom-0 left-1 right-1 h-2 rounded-sm ${
                           isBooked
-                            ? "bg-red-700"
+                            ? "bg-gray-500"
                             : isSelected
                             ? "bg-orange-700"
                             : "bg-orange-300"

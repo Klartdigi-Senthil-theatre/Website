@@ -21,13 +21,13 @@ const TicketPage = () => {
   const navigate = useNavigate();
   const [showTicket, setShowTicket] = useState(false);
 
-  const { movieId, timing, selectedSeats, totalPrice, userDetails, bookingId } =
+  const { movie, timing, selectedSeats, totalPrice, userDetails, bookingId } =
     location.state || {};
 
   // Calculate price per seat (assuming equal distribution for simplicity)
   const pricePerSeat = selectedSeats ? totalPrice / selectedSeats.length : 0;
 
-  const qrCodeData = `Movie: ${movieId}\nDate: ${new Date().toLocaleDateString()}\nTime: ${timing}\nSeats: ${selectedSeats?.join(
+  const qrCodeData = `Movie: ${movie?.title || "Movie Title"}\nDate: ${new Date().toLocaleDateString()}\nTime: ${timing}\nSeats: ${selectedSeats?.join(
     ", "
   )}\nBooking ID: ${bookingId}\nAmount: ₹${totalPrice}`;
 
@@ -53,87 +53,139 @@ const TicketPage = () => {
       const margin = 10;
       const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
 
+      // Sort seats properly (handles both letters and numbers like A1, A2, B1, B2 etc.)
+      const sortedSeats = [...selectedSeats].sort((a, b) => {
+        // Extract row letter and seat number
+        const matchA = a.match(/([A-Z]+)(\d+)/);
+        const matchB = b.match(/([A-Z]+)(\d+)/);
+        
+        if (matchA && matchB) {
+          const [, rowA, numA] = matchA;
+          const [, rowB, numB] = matchB;
+          
+          // First compare by row letter
+          if (rowA !== rowB) {
+            return rowA.localeCompare(rowB);
+          }
+          // Then compare by seat number
+          return parseInt(numA) - parseInt(numB);
+        }
+        
+        // Fallback to string comparison
+        return a.localeCompare(b);
+      });
+
       // Generate individual tickets for each seat
-      for (let i = 0; i < selectedSeats.length; i++) {
+      for (let i = 0; i < sortedSeats.length; i++) {
         if (i > 0) pdf.addPage(); // Add new page for each ticket after the first
 
-        const seat = selectedSeats[i];
+        const seat = sortedSeats[i];
         const seatPrice = pricePerSeat;
 
         const ticketElement = document.createElement("div");
         ticketElement.className =
           "bg-white rounded-xl shadow-lg p-4 w-full max-w-md mx-auto mb-4 border border-gray-200";
         ticketElement.innerHTML = `
-          <div class="bg-gradient-to-r bg-black p-4 text-white rounded-t-xl">
-            <div class="flex justify-between items-center text-white">
-              <div>
-                <h2 class="text-xl font-bold">${movieId || "Movie Title"}</h2>
-                <p class="text-sm opacity-80">Cinema Experience</p>
-              </div>
-              <div class="bg-white bg-opacity-20 p-2 rounded-full">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
-                </svg>
+                     <div style="background: #000000; padding: 24px; color: white; border-radius: 12px 12px 0 0; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+              <h2 style="font-size: 18px; font-weight: bold; margin: 0; line-height: 1.2;">${movie?.title || "Movie Title"}</h2>
+              <div style="background: white; padding: 4px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <img src="/logo.webp" alt="Theatre Logo" style="width: 28px; height: 28px; object-fit: contain; border-radius: 50%;" />
               </div>
             </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <p style="font-size: 14px; opacity: 0.9; margin: 0;">Cinema Experience</p>
+              <div style="text-align: right;">
+                <span style="font-size: 12px; opacity: 0.8;">Booking ID: </span>
+                <span style="font-family: monospace; font-weight: bold; font-size: 14px;">${bookingId}</span>
+              </div>
+            </div>
+                         <!-- Decorative perforations -->
+             <div style="position: absolute; bottom: -8px; left: 0; right: 0; height: 16px; background: white; display: flex; justify-content: space-between; align-items: center; padding: 0 8px;">
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+               <div style="width: 8px; height: 8px; background: #000000; border-radius: 50%;"></div>
+             </div>
           </div>
-          <div class="p-4">
+          <div style="padding: 24px; background: white;">
             <div class="grid grid-cols-2 gap-4 mb-4">
-              <div class="flex items-center gap-2">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <div>
-                  <p class="text-xs text-gray-500">Date & Time</p>
-                  <p class="font-medium">${new Date().toLocaleDateString()} • ${timing}</p>
+              <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <div>
+                    <p class="text-xs text-gray-500">Date & Time</p>
+                    <p style="font-size: 11px; font-weight: 500;">${new Date().toLocaleDateString()} • ${timing}</p>
+                  </div>
                 </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <div>
-                  <p class="text-xs text-gray-500">Seat</p>
-                  <p class="font-medium">${seat}</p>
+
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 616 0z" />
+                  </svg>
+                  <div>
+                    <p class="text-xs text-gray-500">Theatre</p>
+                    <p style="font-size: 11px; font-weight: 500;">Senthil Theatre</p>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div>
-                  <p class="text-xs text-gray-500">Theatre</p>
-                  <p class="font-medium">XYZ Theatre</p>
+              <div class="space-y-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" />
+                  </svg>
+                  <div>
+                    <p class="text-xs text-gray-500">Seat</p>
+                    <p style="font-size: 11px; font-weight: 500;">${seat}</p>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p class="text-xs text-gray-500">Booking ID</p>
-                <p class="font-mono font-medium">${bookingId}</p>
+                <div>
+                  <p class="text-xs text-gray-500">Amount</p>
+                  <p class="text-lg font-bold text-orange-600">₹${seatPrice.toFixed(
+                    2
+                  )}</p>
+                </div>
               </div>
             </div>
             
-            <div class="flex justify-between items-center mb-4">
-              <div>
-                <p class="text-xs text-gray-500">Customer</p>
-                <p class="font-medium">${userDetails?.name}</p>
+            <div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 6px; width: 100%;">
+              <div style="flex-shrink: 0;">
+                <div style="width: 120px; height: 120px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #e5e7eb;">
+                  <img src="${generateQRCodeURL(
+                    qrCodeData
+                  )}" alt="QR Code" style="width: 100%; height: 100%; object-fit: contain;" />
+                </div>
+                <p style="text-align: center; font-size: 9px; color: #6b7280; margin: 8px 0 0 0; width: 120px;">Scan at theatre entrance</p>
               </div>
-              <div class="text-right">
-                <p class="text-xs text-gray-500">Amount</p>
-                <p class="text-lg font-bold text-orange-600">₹${seatPrice.toFixed(
-                  2
-                )}</p>
+              <div style="flex: 1; width: 100%;">
+                <div style="padding: 12px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb; width: 100%; box-sizing: border-box; height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                  <p style="font-size: 13px; color: #6b7280; margin: 0 0 8px 0; font-weight: 500;">Customer Details</p>
+                  <p style="font-size: 14px; margin: 0; color: #374151; font-weight: 600;">${userDetails?.name}</p>
+                  <p style="font-size: 11px; margin: 4px 0 0 0; color: #374151;">${userDetails?.email || 'N/A'}</p>
+                  <p style="font-size: 11px; margin: 4px 0 0 0; color: #374151;">${userDetails?.mobile || 'N/A'}</p>
+                </div>
               </div>
             </div>
             
-            <div class="flex justify-between items-center">
-              <div class="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                <img src="${generateQRCodeURL(
-                  qrCodeData
-                )}" alt="QR Code" class="w-full h-full object-cover" />
-              </div>
+            <!-- Footer Notice -->
+            <div style="margin-top: 20px; padding: 12px; background: #fef9e7; border-radius: 6px; border-left: 4px solid #f59e0b;">
+              <p style="font-size: 9px; color: #92400e; margin: 0; font-weight: 500;">📢 Please arrive 15 minutes before showtime. Carry a valid ID proof.</p>
             </div>
-            <p class="text-center text-xs text-gray-500 mt-2">Scan at theatre entrance</p>
           </div>
         `;
 
@@ -186,8 +238,8 @@ const TicketPage = () => {
 
   const handleShare = () => {
     const shareText = `🎬 *Movie Ticket Confirmed!* 🎬
-      🎭 *Movie:* ${movieId || "Movie Title"}
-      🏛️ *Theatre:* XYZ Theatre
+      🎭 *Movie:* ${movie?.title || "Movie Title"}
+      🏛️ *Theatre:* Senthil Theatre
       📅 *Date:* ${new Date().toLocaleDateString()}
       ⏰ *Time:* ${timing}
       🎫 *Seats:* ${selectedSeats?.join(", ")}
@@ -290,29 +342,27 @@ const TicketPage = () => {
                     >
                       <div>
                         <h2 className="text-xl font-bold mb-1">
-                          {movieId || "Movie Title"}
+                          {movie?.title || "Movie Title"}
                         </h2>
                         <p className="text-md text-orange-100">
                           Cinema Experience
                         </p>
                       </div>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                        className="bg-white bg-opacity-20 p-2 rounded-full"
-                      >
-                        <Ticket className="w-6 h-6" />
-                      </motion.div>
+                      <div className="bg-white bg-opacity-20 p-2 rounded-full">
+                        <img 
+                          src="/logo.webp" 
+                          alt="Theatre Logo" 
+                          className="w-6 h-6 object-contain"
+                        />
+                      </div>
                     </motion.div>
 
                     <motion.div variants={fadeInUp} className="text-right">
-                      <div className="text-sm opacity-80">Booking ID</div>
-                      <div className="font-mono text-lg font-bold">
-                        {bookingId}
+                      <div className="text-sm  flex items-center justify-end gap-2">
+                        <span className="opacity-80">Booking ID :</span>
+                        <span className="font-mono text-sm font-bold text-white opacity-100">
+                          {bookingId}
+                        </span>
                       </div>
                     </motion.div>
                   </motion.div>
@@ -375,7 +425,7 @@ const TicketPage = () => {
                         <MapPin className="w-5 h-5 text-orange-500" />
                         <div>
                           <div className="text-sm text-gray-500">Theatre</div>
-                          <div className="font-medium">XYZ Theatre</div>
+                          <div className="font-medium">Senthil Theatre</div>
                         </div>
                       </motion.div>
                     </div>

@@ -49,8 +49,8 @@ const AdvertisementCarousel = () => {
   }, [ads.length]);
 
   return (
-    <div className="flex justify-center px-4 py-6">
-      <div className="relative w-full max-w-7xl h-64 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-100">
+    <div className="flex flex-col items-center px-4 py-6">
+      <div className="relative w-full max-w-7xl h-80 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-100">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <p>Loading advertisements...</p>
@@ -82,20 +82,6 @@ const AdvertisementCarousel = () => {
               </motion.div>
             ))}
 
-            {/* Navigation Dots */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-              {ads.map((_, index) => (
-                <motion.button
-                  key={index}
-                  onClick={() => setCurrentAd(index)}
-                  className={`w-3 h-3 rounded-full ${
-                    index === currentAd ? "bg-white" : "bg-gray-300"
-                  }`}
-                  whileHover={{ scale: 1.2 }}
-                />
-              ))}
-            </div>
-
             {/* Left/Right Navigation Arrows */}
             <button
               onClick={() =>
@@ -114,6 +100,22 @@ const AdvertisementCarousel = () => {
           </>
         )}
       </div>
+      
+      {/* Navigation Dots - Now outside the carousel */}
+      {!loading && !error && (
+        <div className="flex justify-center space-x-2 mt-4">
+          {ads.map((_, index) => (
+            <motion.button
+              key={index}
+              onClick={() => setCurrentAd(index)}
+              className={`w-3 h-3 rounded-full ${
+                index === currentAd ? "bg-orange-500" : "bg-gray-300"
+              }`}
+              whileHover={{ scale: 1.2 }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

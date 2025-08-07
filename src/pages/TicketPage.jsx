@@ -21,13 +21,13 @@ const TicketPage = () => {
   const navigate = useNavigate();
   const [showTicket, setShowTicket] = useState(false);
 
-  const { movie, timing, selectedSeats, totalPrice, userDetails, bookingId } =
+  const { movie, timing, selectedSeats, totalPrice, userDetails, bookingId, date } =
     location.state || {};
 
   // Calculate price per seat (assuming equal distribution for simplicity)
   const pricePerSeat = selectedSeats ? totalPrice / selectedSeats.length : 0;
 
-  const qrCodeData = `Movie: ${movie?.title || "Movie Title"}\nDate: ${new Date().toLocaleDateString()}\nTime: ${timing}\nSeats: ${selectedSeats?.join(
+  const qrCodeData = `Movie: ${movie?.title || "Movie Title"}\nDate: ${date || new Date().toLocaleDateString()}\nTime: ${timing}\nSeats: ${selectedSeats?.join(
     ", "
   )}\nBooking ID: ${bookingId}\nAmount: ₹${totalPrice}`;
 
@@ -87,17 +87,17 @@ const TicketPage = () => {
           "bg-white rounded-xl shadow-lg p-4 w-full max-w-md mx-auto mb-4 border border-gray-200";
         ticketElement.innerHTML = `
                      <div style="background: #000000; padding: 24px; color: white; border-radius: 12px 12px 0 0; position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
-              <h2 style="font-size: 18px; font-weight: bold; margin: 0; line-height: 1.2;">${movie?.title || "Movie Title"}</h2>
-              <div style="background: white; padding: 4px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                <img src="/logo.webp" alt="Theatre Logo" style="width: 28px; height: 28px; object-fit: contain; border-radius: 50%;" />
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div style="flex: 1;">
+                <h2 style="font-size: 18px; font-weight: bold; margin: 0 0 2px 0; line-height: 1.2;">${movie?.title || "Movie Title"}</h2>
+                <p style="font-size: 11px; opacity: 0.8; margin: 0 0 6px 0;">Cinema Experience</p>
+                <div style="margin-top: 6px;">
+                  <span style="font-size: 10px; opacity: 0.8;">Booking ID: </span>
+                  <span style="font-family: monospace; font-weight: bold; font-size: 11px;">${bookingId}</span>
+                </div>
               </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <p style="font-size: 14px; opacity: 0.9; margin: 0;">Cinema Experience</p>
-              <div style="text-align: right;">
-                <span style="font-size: 12px; opacity: 0.8;">Booking ID: </span>
-                <span style="font-family: monospace; font-weight: bold; font-size: 14px;">${bookingId}</span>
+              <div style="background: white; padding: 2px; border-radius: 50%; width: 22%; height: 0; padding-bottom: 22%; position: relative; overflow: hidden;">
+                <img src="${movie?.poster || "/logo.webp"}" alt="Movie Poster" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: calc(100% - 4px); height: calc(100% - 4px); object-fit: cover; border-radius: 50%;" />
               </div>
             </div>
                          <!-- Decorative perforations -->
@@ -128,7 +128,7 @@ const TicketPage = () => {
                   </svg>
                   <div>
                     <p class="text-xs text-gray-500">Date & Time</p>
-                    <p style="font-size: 11px; font-weight: 500;">${new Date().toLocaleDateString()} • ${timing}</p>
+                    <p style="font-size: 11px; font-weight: 500;">${date || new Date().toLocaleDateString()} • ${timing}</p>
                   </div>
                 </div>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -141,6 +141,7 @@ const TicketPage = () => {
                   <div>
                     <p class="text-xs text-gray-500">Theatre</p>
                     <p style="font-size: 11px; font-weight: 500;">Senthil Cinema</p>
+                    <p style="font-size: 8px; color: #6b7280; margin-top: 2px;">GST IN: 33CMMPP7822B1Z2</p>
                   </div>
                 </div>
               </div>
@@ -224,8 +225,7 @@ const TicketPage = () => {
       }
 
       // Save the PDF
-      const fileName = `MovieTickets_${bookingId}_${new Date()
-        .toLocaleDateString()
+      const fileName = `MovieTickets_${bookingId}_${(date || new Date().toLocaleDateString())
         .replace(/\//g, "-")}.pdf`;
       pdf.save(fileName);
 
@@ -246,7 +246,7 @@ THEATRE: Senthil Cinema
 
 📋 BOOKING DETAILS:
 * Booking ID: ${bookingId}
-* Date: ${new Date().toLocaleDateString()}
+* Date: ${date || new Date().toLocaleDateString()}
 * Show Time: ${timing}
 * Seats: ${selectedSeats?.join(", ")}
 * Customer: ${userDetails?.name}
@@ -356,29 +356,27 @@ THEATRE: Senthil Cinema
                       variants={fadeInUp}
                       className="flex justify-between items-start"
                     >
-                      <div>
-                        <h2 className="text-xl font-bold mb-1">
+                      <div className="flex-1">
+                        <h2 className="text-xl font-bold mb-2">
                           {movie?.title || "Movie Title"}
                         </h2>
-                        <p className="text-md text-orange-100">
+                        <p className="text-sm text-orange-100 mb-2">
                           Cinema Experience
                         </p>
+                        <div className="text-xs flex items-center gap-2 pb-2">
+                          <span className="opacity-80">Booking ID:</span>
+                          <span className="font-mono text-xs font-bold text-white opacity-100">
+                            {bookingId}
+                          </span>
+                        </div>
                       </div>
-                      <div className="bg-white bg-opacity-20 p-2 rounded-full">
+                      <div className="bg-white bg-opacity-20 rounded-full relative w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 overflow-hidden" style={{ padding: '2px' }}>
                         <img 
-                          src="/logo.webp" 
-                          alt="Theatre Logo" 
-                          className="w-6 h-6 object-contain"
+                          src={movie?.poster || "/logo.webp"} 
+                          alt="Movie Poster" 
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 object-cover rounded-full"
+                          style={{ width: 'calc(100% - 4px)', height: 'calc(100% - 4px)' }}
                         />
-                      </div>
-                    </motion.div>
-
-                    <motion.div variants={fadeInUp} className="text-right">
-                      <div className="text-sm  flex items-center justify-end gap-2">
-                        <span className="opacity-80">Booking ID :</span>
-                        <span className="font-mono text-sm font-bold text-white opacity-100">
-                          {bookingId}
-                        </span>
                       </div>
                     </motion.div>
                   </motion.div>
@@ -416,7 +414,7 @@ THEATRE: Senthil Cinema
                             Date & Time
                           </div>
                           <div className="font-medium">
-                            {new Date().toLocaleDateString()} • {timing}
+                            {date || new Date().toLocaleDateString()} • {timing}
                           </div>
                         </div>
                       </motion.div>
@@ -442,6 +440,7 @@ THEATRE: Senthil Cinema
                         <div>
                           <div className="text-sm text-gray-500">Theatre</div>
                           <div className="font-medium">Senthil Cinema</div>
+                          <div className="text-xs text-gray-400">GST IN: 33CMMPP7822B1Z2</div>
                         </div>
                       </motion.div>
                     </div>

@@ -140,7 +140,7 @@ const TicketPage = () => {
                   </svg>
                   <div>
                     <p class="text-xs text-gray-500">Theatre</p>
-                    <p style="font-size: 11px; font-weight: 500;">Senthil Theatre</p>
+                    <p style="font-size: 11px; font-weight: 500;">Senthil Cinema</p>
                   </div>
                 </div>
               </div>
@@ -237,17 +237,33 @@ const TicketPage = () => {
   };
 
   const handleShare = () => {
-    const shareText = `🎬 *Movie Ticket Confirmed!* 🎬
-      🎭 *Movie:* ${movie?.title || "Movie Title"}
-      🏛️ *Theatre:* Senthil Theatre
-      📅 *Date:* ${new Date().toLocaleDateString()}
-      ⏰ *Time:* ${timing}
-      🎫 *Seats:* ${selectedSeats?.join(", ")}
-      💰 *Total Amount:* ₹${totalPrice}
-      🆔 *Booking ID:* ${bookingId}
-      👤 *Customer:* ${userDetails?.name}
-      🎯 *QR Code:* ${generateQRCodeURL(qrCodeData)}
-      🍿 Enjoy your movie experience! 🎬`;
+    const shareText = `🎬✨ MOVIE TICKET BOOKING CONFIRMED ✨🎬
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+MOVIE: ${movie?.title || "Movie Title"}
+THEATRE: Senthil Cinema
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 BOOKING DETAILS:
+* Booking ID: ${bookingId}
+* Date: ${new Date().toLocaleDateString()}
+* Show Time: ${timing}
+* Seats: ${selectedSeats?.join(", ")}
+* Customer: ${userDetails?.name}
+
+💰 PAYMENT SUMMARY:
+* Total Amount: ₹${totalPrice}
+* Seats: ${selectedSeats?.length} × ₹${pricePerSeat.toFixed(2)}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+📱 IMPORTANT NOTES:
+* Please arrive 15 minutes before showtime
+* Carry a valid ID for verification
+* Show this ticket at the theatre entrance
+
+🍿 Enjoy your movie experience! 🎬
+
+(powered by Senthil Cinema)`;
 
     const whatsappURL = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
     if (
@@ -425,7 +441,7 @@ const TicketPage = () => {
                         <MapPin className="w-5 h-5 text-orange-500" />
                         <div>
                           <div className="text-sm text-gray-500">Theatre</div>
-                          <div className="font-medium">Senthil Theatre</div>
+                          <div className="font-medium">Senthil Cinema</div>
                         </div>
                       </motion.div>
                     </div>

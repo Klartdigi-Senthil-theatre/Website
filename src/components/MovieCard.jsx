@@ -25,8 +25,10 @@ const MovieCard = ({ movie, onBookNow, selectedDate }) => {
       <div className="w-full sm:w-[65%] flex flex-col justify-between p-4">
         {/* Movie Info */}
         <div>
-          <h3 className="font-semibold text-3xl text-orange-900">{movie.title}</h3>
-          <p className="text-xs text-gray-600 mt-1">{movie.genre}</p>
+          <h3 className="font-semibold text-3xl text-orange-900">
+            {movie.title}
+          </h3>
+          <p className="text-xs text-gray-600 mt-1">{movie.certificate}</p>
           <p className="text-sm text-blue-600 font-medium mt-1">
             {movie.language}
           </p>

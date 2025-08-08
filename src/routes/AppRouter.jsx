@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import SeatSelection from "../pages/SeatSelection";
 import TicketPage from "../pages/TicketPage";
+import TermsAndConditions from "../pages/TermsAndConditions";
 import Notification from "../components/Notification";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/select-seats" element={<SeatSelection />} />
             <Route path="/get-tickets" element={<TicketPage />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           </Routes>
         </div>
         {/* <Footer /> */}

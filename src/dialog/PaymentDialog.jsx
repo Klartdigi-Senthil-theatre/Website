@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, X, QrCode } from "lucide-react";
 import QRCode from "qrcode.react";
 
-export const PaymentDialog = ({
+const PaymentDialog = ({
   selectedSeats,
   seatPrice,
   handlePaymentComplete,
@@ -211,3 +211,5 @@ export const PaymentDialog = ({
     </motion.div>
   );
 };
+
+export default PaymentDialog;

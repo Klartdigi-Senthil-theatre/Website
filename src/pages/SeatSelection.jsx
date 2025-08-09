@@ -6,6 +6,7 @@ import NavigationButtons from "../components/NavigationButtons";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
 import { getAccessKey } from "../services/paymentGateway";
+import PaymentDialog from "../dialog/PaymentDialog";
 
 const SeatSelection = () => {
   const location = useLocation();

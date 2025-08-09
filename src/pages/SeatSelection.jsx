@@ -1,12 +1,11 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import SeatLayout from "../components/SeatLayout";
+import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavigationButtons from "../components/NavigationButtons";
+import SeatLayout from "../components/SeatLayout";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
 import { getAccessKey } from "../services/paymentGateway";
-import PaymentDialog from "../dialog/PaymentDialog";
 
 const SeatSelection = () => {
   const location = useLocation();
@@ -18,7 +17,6 @@ const SeatSelection = () => {
   const [bookedSeats, setBookedSeats] = useState([]);
   const [currentSessionHolds, setCurrentSessionHolds] = useState([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -151,12 +149,11 @@ const SeatSelection = () => {
         },
         // Success callback
         () => {
-          setShowPayment(true);
           setPaymentLoading(false);
+          handlePaymentComplete();
         },
         // Failure callback
         (errorMsg) => {
-          setShowPayment(false);
           setError(`Payment failed: ${errorMsg}`);
           setPaymentLoading(false);
         }
@@ -169,7 +166,6 @@ const SeatSelection = () => {
   };
 
   const handlePaymentComplete = () => {
-    setShowPayment(false);
     navigate("/get-tickets", {
       state: {
         movie,
@@ -331,24 +327,6 @@ const SeatSelection = () => {
               setShowUserDetails(false);
               setPaymentLoading(false);
             }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Payment Dialog */}
-      <AnimatePresence>
-        {showPayment && (
-          <PaymentDialog
-            selectedSeats={selectedSeats}
-            seatPrice={price || 0}
-            handlePaymentComplete={handlePaymentComplete}
-            onClose={() => setShowPayment(false)}
-            movie={movie}
-            date={date}
-            timing={timing}
-            showTimeId={showTimeId}
-            showTimePlannerId={showTimePlannerId}
-            userDetails={formData}
           />
         )}
       </AnimatePresence>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, X, QrCode } from "lucide-react";
-import QRCode from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 
 const PaymentDialog = ({
   selectedSeats,
@@ -89,7 +89,7 @@ const PaymentDialog = ({
               Payment Successful!
             </h3>
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
-              <QRCode
+              <QRCodeCanvas
                 id="qrCodeEl"
                 size={150}
                 value={qrCodeValue}

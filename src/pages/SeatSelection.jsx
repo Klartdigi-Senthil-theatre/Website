@@ -138,7 +138,7 @@ const SeatSelection = () => {
 
       getAccessKey(
         {
-          amount: 1,
+          amount: totalPrice,
           email: formData.email,
           name: formData.name,
           phone: formData.mobile,

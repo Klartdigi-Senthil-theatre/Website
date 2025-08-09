@@ -1,4 +1,5 @@
 import { sha512 } from "js-sha512";
+import api from "./api";
 
 export const generateHash = (data) => {
   let hashstring =
@@ -32,13 +33,13 @@ export const generateHash = (data) => {
   return sha512.sha512(hashstring);
 };
 
-export const getAccessKey = async (data) => {
+export const getAccessKey = async (data, onSuccess, onFailure) => {
   console.log("generate access key function");
   //   const txnid = await this.common.generateUniqueTransactionId(
   //     this.authService.currentUserValue.id
   //   );
 
-  const txnid = "123459876545676";
+  const txnid = Math.floor(100000 + Math.random() * 900000).toString();
   const form = {
     key: "Z9NHVY7G41",
     txnid: txnid,
@@ -63,36 +64,66 @@ export const getAccessKey = async (data) => {
   const hash_key = generateHash(form);
   form.hash = hash_key;
   console.log(form.hash);
-  initiatePayment("");
 
-  //   const url = "api/feeinfo/getaccesskey";
-  //   return await this.apiService.post(url, form).toPromise();
+  const url = "transactions/getaccesskey";
+  const response = await api.post(url, form);
+  if (response.data["status"] != null && response.data["status"] == 1) {
+    initiatePayment(response.data["data"], data, onSuccess, onFailure);
+  } else {
+    //payment failer message
+  }
 };
 
-export const initiatePayment = async (accessKey) => {
-  console.log(accessKey);
-
+export const initiatePayment = async (
+  accessKey,
+  data,
+  onSuccess,
+  onFailure
+) => {
   const options = {
-    access_key:
-      "6f144045fba991f44125edb54e2ed70e94001c06c67d35fc681c729792477364",
+    access_key: accessKey,
     pay_mode: "production", // access key received via Initiate Payment
-    // onResponse: (response) => {
-    //   if (response.status == "success") {
+    iframe: true,
+    onResponse: async (response) => {
+      if (response.status == "success") {
+        try {
+          console.log(response);
+          const booking = await api.post("/movie-seat-bookings", {
+            movieId: data?.movieId ?? "",
+            userId: data?.userId ?? "",
+            showTimePlannerId: data?.showTimePlannerId ?? "",
+            date: data?.date ?? "",
+            bookingSeats: data?.selectedSeats ?? "",
+          });
 
-    //   } else {
-    //     this.snackBar.open(
-    //       `Payment failed, Reason: "${response.error_Message}". Please try again.`,
-    //       "Close",
-    //       {
-    //         duration: 6000,
-    //       }
-    //     );
-    //   }
-    // },
+          await api.post("/transactions", {
+            movieSeatBookingId: booking.data.id,
+            paymentMode: response["card_type"] ?? "Card",
+            easePayId: response["easepayid"] ?? "12345",
+            amount: data.amount ?? 0,
+            UDF1: `${data.userId}` ?? "",
+            UDF2: data.phone ?? "",
+          });
+        } catch (error) {
+          console.error("Booking API error:", err);
+          onFailure?.("Booking API error");
+        }
+
+        onSuccess?.(response);
+      } else {
+        this.snackBar.open(
+          `Payment failed, Reason: "${response.error_Message}". Please try again.`,
+          "Close",
+          {
+            duration: 6000,
+          }
+        );
+
+        onFailure?.(response.error_Message);
+      }
+    },
     theme: "#123456", // color hex
   };
 
   new window.EasebuzzCheckout("Z9NHVY7G41", "prod").initiatePayment(options);
-
-  //   this.easebuzzCheckout.initiatePayment(options);
 };

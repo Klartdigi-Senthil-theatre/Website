@@ -84,11 +84,11 @@ const Home = () => {
 
           // Add showtime to the movie's timings and prices
           const movie = moviesMap.get(movieId);
-          
+
           // Handle both formats: "14:00" or "2023-10-05 10:00:00"
           const rawShowTime = entry.showTime.showTime;
           let showTimeStr;
-          
+
           if (rawShowTime.includes(" ")) {
             // Format: "2023-10-05 10:00:00" - split and take time part
             showTimeStr = rawShowTime.split(" ")[1];
@@ -96,7 +96,7 @@ const Home = () => {
             // Format: "14:00" - use as is
             showTimeStr = rawShowTime;
           }
-          
+
           if (showTimeStr) {
             const [hours, minutes] = showTimeStr.split(":").map(Number);
             const showTime = new Date();
@@ -125,21 +125,21 @@ const Home = () => {
             timings: movie.timings.sort((a, b) => {
               // Convert time strings back to Date objects for proper comparison
               const parseTime = (timeStr) => {
-                const [time, period] = timeStr.split(' ');
-                const [hours, minutes] = time.split(':').map(Number);
+                const [time, period] = timeStr.split(" ");
+                const [hours, minutes] = time.split(":").map(Number);
                 let hour24 = hours;
-                
-                if (period === 'PM' && hours !== 12) {
+
+                if (period === "PM" && hours !== 12) {
                   hour24 += 12;
-                } else if (period === 'AM' && hours === 12) {
+                } else if (period === "AM" && hours === 12) {
                   hour24 = 0;
                 }
-                
+
                 return hour24 * 60 + minutes; // Convert to minutes for easy comparison
               };
-              
+
               return parseTime(a) - parseTime(b);
-            })
+            }),
           }));
 
         setMovies(formattedMovies);
@@ -171,11 +171,11 @@ const Home = () => {
     const showTimeEntry = showtimeData.find((entry) => {
       if (!entry.showTime || !entry.active || entry.movieId !== movieId)
         return false;
-      
+
       // Handle both formats: "14:00" or "2023-10-05 10:00:00"
       const rawShowTime = entry.showTime.showTime;
       let showTimeStr;
-      
+
       if (rawShowTime.includes(" ")) {
         // Format: "2023-10-05 10:00:00" - split and take time part
         showTimeStr = rawShowTime.split(" ")[1];
@@ -183,7 +183,7 @@ const Home = () => {
         // Format: "14:00" - use as is
         showTimeStr = rawShowTime;
       }
-      
+
       if (!showTimeStr) return false;
       const [hours, minutes] = showTimeStr.split(":").map(Number);
       const showTime = new Date();
@@ -208,9 +208,7 @@ const Home = () => {
       state: {
         movie: selectedMovie,
         timing,
-        date: selectedDate.toLocaleDateString("en-US", {
-          timeZone: "Asia/Kolkata",
-        }),
+        date: selectedDate.toISOString(),
         price: showTimeEntry.price,
         showTimeId: showTimeEntry.showTimeId,
         showTimePlannerId: showTimeEntry.id, // Pass showTimePlannerId

@@ -6,6 +6,7 @@ import NavigationButtons from "../components/NavigationButtons";
 import PaymentDialog from "../dialog/PaymentDialog";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
+import { getAccessKey } from "../services/paymentGateway";
 
 const SeatSelection = () => {
   const location = useLocation();
@@ -40,11 +41,20 @@ const SeatSelection = () => {
           `/movie-seat-bookings/show-time-planner/${showTimePlannerId}`
         );
 
+        const response1 = await api.get(
+          `/movie-seat-holds/show-time-planner/${showTimePlannerId}`
+        );
+
         // Map seatNumber arrays to seatNo values
         const booked = response.data.flatMap((booking) =>
           booking.seatNumber.map((seat) => seat.seatNo)
         );
-        setBookedSeats(booked);
+
+        const booked1 = response1.data.flatMap((booking) =>
+          booking.seatNumbers.map((seat) => seat.seatNo)
+        );
+
+        setBookedSeats([...booked1, ...booked]);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch booked seats");
@@ -66,15 +76,66 @@ const SeatSelection = () => {
     );
   };
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
     if (selectedSeats.length === 0) return;
-    setShowUserDetails(true);
+
+    try {
+      await api.post("/movie-seat-holds", {
+        movieId: movie.id,
+        showTimePlannerId: showTimePlannerId,
+        date: date,
+        bookedSeats: selectedSeats,
+      });
+      setShowUserDetails(true);
+    } catch (err) {
+      setError("Failed to hold seats");
+      console.error("Seat hold error:", err);
+    }
   };
 
-  const handleUserDetailsSubmit = (e) => {
+  const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
     setShowUserDetails(false);
-    setShowPayment(true);
+    const totalPrice = selectedSeats.length * price;
+    setFormData((prev) => ({ ...prev, totalPrice }));
+
+    try {
+      const createUser = await api.post("/users", {
+        name: formData.name,
+        emailId: formData.email,
+        phoneNumber: formData.mobile,
+      });
+
+      const userId = createUser.data.id;
+
+      getAccessKey(
+        {
+          amount: totalPrice,
+          email: formData.email,
+          name: formData.name,
+          phone: formData.mobile,
+          userId: userId,
+          movieId: movie.id,
+          showTimePlannerId: showTimePlannerId,
+          date: date,
+          selectedSeats: selectedSeats,
+        },
+        // ✅ Success callback
+        () => {
+          setShowPayment(true); // only show if payment succeeded
+        },
+        // ❌ Failure callback
+        (errorMsg) => {
+          setShowPayment(false);
+          setError(`Payment failed: ${errorMsg}`);
+        }
+      );
+
+      setShowPayment(true);
+    } catch (err) {
+      setError("Failed to create user");
+      console.error("User creation error:", err);
+    }
   };
 
   const handlePaymentComplete = () => {

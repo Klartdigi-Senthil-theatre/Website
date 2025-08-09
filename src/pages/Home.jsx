@@ -211,7 +211,7 @@ const Home = () => {
         date: selectedDate.toISOString(),
         price: showTimeEntry.price,
         showTimeId: showTimeEntry.showTimeId,
-        showTimePlannerId: showTimeEntry.id, // Pass showTimePlannerId
+        showTimePlannerId: showTimeEntry.id,
       },
     });
   };

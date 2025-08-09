@@ -3,9 +3,10 @@ import { X } from "lucide-react";
 
 const UserDetailsDialog = ({
   formData,
+  paymentLoading,
   handleChange,
   handleUserDetailsSubmit,
-  onClose
+  onClose,
 }) => {
   return (
     <motion.div
@@ -75,16 +76,20 @@ const UserDetailsDialog = ({
               onChange={handleChange}
               className="p-2 border-2 border-orange-200 rounded-lg focus:border-orange-500"
               required
-              //pattern="[0-9]{10}"
             />
           </div>
 
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
+              disabled={paymentLoading}
+              className={`bg-orange-600 text-white py-2 px-4 rounded ${
+                paymentLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-orange-700"
+              }`}
             >
-              Submit Details
+              {paymentLoading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>

@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SeatLayout from "../components/SeatLayout";
 import NavigationButtons from "../components/NavigationButtons";
-import PaymentDialog from "../dialog/PaymentDialog";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
 import { getAccessKey } from "../services/paymentGateway";
@@ -25,6 +24,7 @@ const SeatSelection = () => {
     mobile: "",
   });
   const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Fetch booked seats for the showTimePlannerId
@@ -63,6 +63,12 @@ const SeatSelection = () => {
   useEffect(() => {
     fetchBookedSeats();
   }, [fetchBookedSeats]);
+
+  useEffect(() => {
+    if (!showUserDetails) {
+      setPaymentLoading(false);
+    }
+  }, [showUserDetails]);
 
   const handleSeatSelect = (seatNumber) => {
     // Allow selection if:
@@ -117,6 +123,7 @@ const SeatSelection = () => {
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
     setShowUserDetails(false);
+    setPaymentLoading(true);
     const totalPrice = selectedSeats.length * price;
     setFormData((prev) => ({ ...prev, totalPrice }));
 
@@ -131,7 +138,7 @@ const SeatSelection = () => {
 
       getAccessKey(
         {
-          amount: totalPrice,
+          amount: 1,
           email: formData.email,
           name: formData.name,
           phone: formData.mobile,
@@ -141,20 +148,21 @@ const SeatSelection = () => {
           date: date,
           selectedSeats: selectedSeats,
         },
-        // ✅ Success callback
+        // Success callback
         () => {
-          setShowPayment(true); // only show if payment succeeded
+          setShowPayment(true);
+          setPaymentLoading(false);
         },
-        // ❌ Failure callback
+        // Failure callback
         (errorMsg) => {
           setShowPayment(false);
           setError(`Payment failed: ${errorMsg}`);
+          setPaymentLoading(false);
         }
       );
-
-      setShowPayment(true);
     } catch (err) {
       setError("Failed to create user");
+      setPaymentLoading(false);
       console.error("User creation error:", err);
     }
   };
@@ -315,9 +323,13 @@ const SeatSelection = () => {
         {showUserDetails && (
           <UserDetailsDialog
             formData={formData}
+            paymentLoading={paymentLoading}
             handleChange={handleChange}
             handleUserDetailsSubmit={handleUserDetailsSubmit}
-            onClose={() => setShowUserDetails(false)}
+            onClose={() => {
+              setShowUserDetails(false);
+              setPaymentLoading(false);
+            }}
           />
         )}
       </AnimatePresence>
@@ -330,6 +342,12 @@ const SeatSelection = () => {
             seatPrice={price || 0}
             handlePaymentComplete={handlePaymentComplete}
             onClose={() => setShowPayment(false)}
+            movie={movie}
+            date={date}
+            timing={timing}
+            showTimeId={showTimeId}
+            showTimePlannerId={showTimePlannerId}
+            userDetails={formData}
           />
         )}
       </AnimatePresence>

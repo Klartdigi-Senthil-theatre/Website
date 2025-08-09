@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SeatLayout from "../components/SeatLayout";
 import NavigationButtons from "../components/NavigationButtons";
@@ -16,6 +16,7 @@ const SeatSelection = () => {
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]);
+  const [currentSessionHolds, setCurrentSessionHolds] = useState([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,71 +28,91 @@ const SeatSelection = () => {
   const [error, setError] = useState(null);
 
   // Fetch booked seats for the showTimePlannerId
-  useEffect(() => {
-    const fetchBookedSeats = async () => {
-      if (!showTimePlannerId) {
-        setError("No showtime planner ID provided");
-        setLoading(false);
-        return;
-      }
+  const fetchBookedSeats = useCallback(async () => {
+    if (!showTimePlannerId) {
+      setError("No showtime planner ID provided");
+      setLoading(false);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const response = await api.get(
-          `/movie-seat-bookings/show-time-planner/${showTimePlannerId}`
-        );
+    try {
+      setLoading(true);
+      const [bookingsResponse, holdsResponse] = await Promise.all([
+        api.get(`/movie-seat-bookings/show-time-planner/${showTimePlannerId}`),
+        api.get(`/movie-seat-holds/show-time-planner/${showTimePlannerId}`),
+      ]);
 
-        const response1 = await api.get(
-          `/movie-seat-holds/show-time-planner/${showTimePlannerId}`
-        );
+      const booked = bookingsResponse.data.flatMap((booking) =>
+        booking.seatNumber.map((seat) => seat.seatNo)
+      );
 
-        // Map seatNumber arrays to seatNo values
-        const booked = response.data.flatMap((booking) =>
-          booking.seatNumber.map((seat) => seat.seatNo)
-        );
+      const held = holdsResponse.data.flatMap((hold) =>
+        hold.seatNumbers.map((seat) => seat.seatNo)
+      );
 
-        const booked1 = response1.data.flatMap((booking) =>
-          booking.seatNumbers.map((seat) => seat.seatNo)
-        );
-
-        setBookedSeats([...booked1, ...booked]);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch booked seats");
-        setBookedSeats([]);
-        setLoading(false);
-        console.error("Fetch booked seats error:", err);
-      }
-    };
-
-    fetchBookedSeats();
+      setBookedSeats([...booked, ...held]);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch booked seats");
+      setBookedSeats([]);
+      setLoading(false);
+      console.error("Fetch booked seats error:", err);
+    }
   }, [showTimePlannerId]);
 
+  useEffect(() => {
+    fetchBookedSeats();
+  }, [fetchBookedSeats]);
+
   const handleSeatSelect = (seatNumber) => {
-    if (bookedSeats.includes(seatNumber)) return; // Prevent selecting booked seats
+    // Allow selection if:
+    // 1. Seat is available OR
+    // 2. Seat is held by current session
+    const isSelectable =
+      !bookedSeats.includes(seatNumber) ||
+      currentSessionHolds.includes(seatNumber);
+
+    if (!isSelectable) return;
+
     setSelectedSeats((prev) =>
       prev.includes(seatNumber)
         ? prev.filter((seat) => seat !== seatNumber)
         : [...prev, seatNumber]
     );
   };
-
   const handleProceed = async () => {
     if (selectedSeats.length === 0) return;
 
     try {
-      await api.post("/movie-seat-holds", {
-        movieId: movie.id,
-        showTimePlannerId: showTimePlannerId,
-        date: date,
-        bookedSeats: selectedSeats,
-      });
+      // Check if any selected seats are newly added (not in current holds)
+      const newSeats = selectedSeats.filter(
+        (seat) => !currentSessionHolds.includes(seat)
+      );
+
+      if (newSeats.length > 0) {
+        await api.post("/movie-seat-holds", {
+          movieId: movie.id,
+          showTimePlannerId: showTimePlannerId,
+          date: date,
+          bookedSeats: newSeats,
+        });
+      }
+
+      // Update current session holds
+      setCurrentSessionHolds(selectedSeats);
       setShowUserDetails(true);
     } catch (err) {
-      setError("Failed to hold seats");
+      setError("Failed to hold seats. Some seats may have been taken.");
+      // Refresh seat availability on error
+      fetchBookedSeats();
       console.error("Seat hold error:", err);
     }
   };
+
+  // Calculate disabled seats (excluding current session holds)
+  const disabledSeats = bookedSeats.filter(
+    (seat) => !currentSessionHolds.includes(seat)
+  );
 
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
@@ -184,7 +205,7 @@ const SeatSelection = () => {
               {/* Seat Layout */}
               <SeatLayout
                 selectedSeats={selectedSeats}
-                bookedSeats={bookedSeats}
+                bookedSeats={disabledSeats}
                 onSeatSelect={handleSeatSelect}
               />
 

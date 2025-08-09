@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const SeatLayout = ({ selectedSeats, bookedSeats, onSeatSelect }) => {
+const SeatLayout = ({ selectedSeats, bookedSeats, heldSeats, onSeatSelect }) => {
   // Define rows with their specific configurations
   const rows = [
     { letter: "A", leftSeats: 10, rightSeats: 10, hasGap: true },

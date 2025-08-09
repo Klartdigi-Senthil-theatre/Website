@@ -35,129 +35,129 @@ const Home = () => {
   const dates = getDates();
 
   // Fetch showtime planner data for the selected date
-  useEffect(() => {
-    const fetchShowtimePlanner = async () => {
-      try {
-        setLoading(true);
-        // Format selectedDate as YYYY-MM-DD in IST
-        const formattedDate = selectedDate
-          .toLocaleDateString("en-CA", {
-            timeZone: "Asia/Kolkata",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .split("/")
-          .reverse()
-          .join("-"); // e.g., "2025-08-07"
+  const fetchShowtimePlanner = async () => {
+    try {
+      setLoading(true);
+      // Format selectedDate as YYYY-MM-DD in IST
+      const formattedDate = selectedDate
+        .toLocaleDateString("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .split("/")
+        .reverse()
+        .join("-"); // e.g., "2025-08-07"
 
-        const response = await api.get(
-          `/show-time-planner/date/${formattedDate}`
-        );
-        const showtimeData = response.data;
-        setShowtimeData(showtimeData);
+      const response = await api.get(
+        `/show-time-planner/date/${formattedDate}`
+      );
+      const showtimeData = response.data;
+      setShowtimeData(showtimeData);
 
-        // Group showtimes by movieId
-        const moviesMap = new Map();
-        showtimeData.forEach((entry) => {
-          // Skip inactive or invalid entries
-          if (!entry.active || !entry.movie || !entry.showTime) {
-            console.warn(`Skipping invalid entry: ${JSON.stringify(entry)}`);
-            return;
-          }
-
-          const movieId = entry.movieId;
-          // Initialize movie entry if it doesn't exist
-          if (!moviesMap.has(movieId)) {
-            moviesMap.set(movieId, {
-              id: movieId,
-              title: entry.movie.movieName,
-              genre: entry.movie.genre || "Not specified", // Fallback for missing genre
-              language: entry.movie.language || "Not specified",
-              poster: entry.movie.image || "/default-poster.jpg",
-              certificate: entry.movie.certificate || "Not specified",
-              duration: entry.movie.duration || 0,
-              timings: [],
-              prices: new Map(), // Map showTimeId to price
-            });
-          }
-
-          // Add showtime to the movie's timings and prices
-          const movie = moviesMap.get(movieId);
-
-          // Handle both formats: "14:00" or "2023-10-05 10:00:00"
-          const rawShowTime = entry.showTime.showTime;
-          let showTimeStr;
-
-          if (rawShowTime.includes(" ")) {
-            // Format: "2023-10-05 10:00:00" - split and take time part
-            showTimeStr = rawShowTime.split(" ")[1];
-          } else {
-            // Format: "14:00" - use as is
-            showTimeStr = rawShowTime;
-          }
-
-          if (showTimeStr) {
-            const [hours, minutes] = showTimeStr.split(":").map(Number);
-            const showTime = new Date();
-            showTime.setHours(hours, minutes);
-            if (!isNaN(showTime.getTime())) {
-              const timeString = showTime.toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-              });
-              movie.timings.push(timeString);
-              movie.prices.set(entry.showTimeId, entry.price);
-            } else {
-              console.warn(
-                `Invalid showTime for showTimeId ${entry.showTimeId}: ${rawShowTime}`
-              );
-            }
-          }
-        });
-
-        // Convert Map to array and filter out movies with no timings
-        const formattedMovies = Array.from(moviesMap.values())
-          .filter((movie) => movie.timings.length > 0)
-          .map((movie) => ({
-            ...movie,
-            // Sort timings chronologically
-            timings: movie.timings.sort((a, b) => {
-              // Convert time strings back to Date objects for proper comparison
-              const parseTime = (timeStr) => {
-                const [time, period] = timeStr.split(" ");
-                const [hours, minutes] = time.split(":").map(Number);
-                let hour24 = hours;
-
-                if (period === "PM" && hours !== 12) {
-                  hour24 += 12;
-                } else if (period === "AM" && hours === 12) {
-                  hour24 = 0;
-                }
-
-                return hour24 * 60 + minutes; // Convert to minutes for easy comparison
-              };
-
-              return parseTime(a) - parseTime(b);
-            }),
-          }));
-
-        setMovies(formattedMovies);
-        setLoading(false);
-      } catch (err) {
-        if (err.response?.status === 400) {
-          setError("Invalid date format");
-        } else if (err.response?.status === 404) {
-          setError("No showtimes available for the selected date");
-        } else {
-          setError("Failed to fetch showtimes");
+      // Group showtimes by movieId
+      const moviesMap = new Map();
+      showtimeData.forEach((entry) => {
+        // Skip inactive or invalid entries
+        if (!entry.active || !entry.movie || !entry.showTime) {
+          console.warn(`Skipping invalid entry: ${JSON.stringify(entry)}`);
+          return;
         }
-        setMovies([]);
-        setLoading(false);
-        console.error("Fetch error:", err);
-      }
-    };
 
+        const movieId = entry.movieId;
+        // Initialize movie entry if it doesn't exist
+        if (!moviesMap.has(movieId)) {
+          moviesMap.set(movieId, {
+            id: movieId,
+            title: entry.movie.movieName,
+            genre: entry.movie.genre || "Not specified", // Fallback for missing genre
+            language: entry.movie.language || "Not specified",
+            poster: entry.movie.image || "/default-poster.jpg",
+            certificate: entry.movie.certificate || "Not specified",
+            duration: entry.movie.duration || 0,
+            timings: [],
+            prices: new Map(), // Map showTimeId to price
+          });
+        }
+
+        // Add showtime to the movie's timings and prices
+        const movie = moviesMap.get(movieId);
+
+        // Handle both formats: "14:00" or "2023-10-05 10:00:00"
+        const rawShowTime = entry.showTime.showTime;
+        let showTimeStr;
+
+        if (rawShowTime.includes(" ")) {
+          // Format: "2023-10-05 10:00:00" - split and take time part
+          showTimeStr = rawShowTime.split(" ")[1];
+        } else {
+          // Format: "14:00" - use as is
+          showTimeStr = rawShowTime;
+        }
+
+        if (showTimeStr) {
+          const [hours, minutes] = showTimeStr.split(":").map(Number);
+          const showTime = new Date();
+          showTime.setHours(hours, minutes);
+          if (!isNaN(showTime.getTime())) {
+            const timeString = showTime.toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+            });
+            movie.timings.push(timeString);
+            movie.prices.set(entry.showTimeId, entry.price);
+          } else {
+            console.warn(
+              `Invalid showTime for showTimeId ${entry.showTimeId}: ${rawShowTime}`
+            );
+          }
+        }
+      });
+
+      // Convert Map to array and filter out movies with no timings
+      const formattedMovies = Array.from(moviesMap.values())
+        .filter((movie) => movie.timings.length > 0)
+        .map((movie) => ({
+          ...movie,
+          // Sort timings chronologically
+          timings: movie.timings.sort((a, b) => {
+            // Convert time strings back to Date objects for proper comparison
+            const parseTime = (timeStr) => {
+              const [time, period] = timeStr.split(" ");
+              const [hours, minutes] = time.split(":").map(Number);
+              let hour24 = hours;
+
+              if (period === "PM" && hours !== 12) {
+                hour24 += 12;
+              } else if (period === "AM" && hours === 12) {
+                hour24 = 0;
+              }
+
+              return hour24 * 60 + minutes; // Convert to minutes for easy comparison
+            };
+
+            return parseTime(a) - parseTime(b);
+          }),
+        }));
+
+      setMovies(formattedMovies);
+      setLoading(false);
+    } catch (err) {
+      if (err.response?.status === 400) {
+        setError("Invalid date format");
+      } else if (err.response?.status === 404) {
+        setError("No showtimes available for the selected date");
+      } else {
+        setError("Failed to fetch showtimes");
+      }
+      setMovies([]);
+      setLoading(false);
+      console.error("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
     fetchShowtimePlanner();
   }, [selectedDate]);
 

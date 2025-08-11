@@ -20,6 +20,17 @@ function App() {
           </Routes>
         </div>
         {/* <Footer /> */}
+          <div className="bg-gray-800 text-white text-center p-4">
+            <p>&copy; 2025 klartdigi. All rights reserved. Developed by Klartdigi.</p>
+            <p className="text-blue-500">
+              <button
+                className="cursor-pointer"
+                onClick={() => window.location.href = '/terms-and-conditions'}
+              >
+                Terms & Conditions
+              </button>
+            </p>
+          </div>
       </div>
     </Router>
   );

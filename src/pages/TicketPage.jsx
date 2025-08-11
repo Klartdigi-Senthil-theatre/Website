@@ -366,7 +366,7 @@ THEATRE: Senthil Cinema
                         <div className="text-xs flex items-center gap-2 pb-2">
                           <span className="opacity-80">Booking ID:</span>
                           <span className="font-mono text-xs font-bold text-white opacity-100">
-                            {bookingId}
+                            ST- {bookingId}
                           </span>
                         </div>
                       </div>

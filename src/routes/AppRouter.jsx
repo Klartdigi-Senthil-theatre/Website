@@ -23,12 +23,12 @@ function App() {
           <div className="bg-gray-800 text-white text-center p-4">
             <p>&copy; 2025 klartdigi. All rights reserved. Developed by Klartdigi.</p>
             <p className="text-blue-500">
-              <button
-                className="cursor-pointer"
-                onClick={() => window.location.href = '/terms-and-conditions'}
+              <Link 
+                to="/terms-and-conditions"
+                className="cursor-pointer hover:underline"
               >
                 Terms & Conditions
-              </button>
+              </Link>
             </p>
           </div>
       </div>

@@ -20,7 +20,7 @@ function App() {
           </Routes>
         </div>
         {/* <Footer /> */}
-          <div className="bg-gray-800 text-white text-center p-4">
+          <div className="bg-gray-800 text-white text-center p-4 mt-20">
             <p>&copy; 2025 klartdigi. All rights reserved. Developed by Klartdigi.</p>
             <p className="text-blue-500">
               <Link 

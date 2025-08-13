@@ -117,12 +117,12 @@ const Home = () => {
                     // const showTime = new Date();
                     // showTime.setHours(hours, minutes);
                     // if (!isNaN(showTime.getTime())) {
-                        // const timeString = showTime.toLocaleTimeString("en-US", {
-                        //     hour: "numeric",
-                        //     minute: "2-digit",
-                        // });
-                        movie.timings.push(showTimeStr);
-                        movie.prices.set(entry.showTimeId, entry.price);
+                    // const timeString = showTime.toLocaleTimeString("en-US", {
+                    //     hour: "numeric",
+                    //     minute: "2-digit",
+                    // });
+                    movie.timings.push(showTimeStr);
+                    movie.prices.set(entry.showTimeId, entry.price);
                     // } else {
                     //     console.warn(
                     //         `Invalid showTime for showTimeId ${entry.showTimeId}: ${rawShowTime}`
@@ -190,27 +190,23 @@ const Home = () => {
 
             // Handle both formats: "14:00" or "2023-10-05 10:00:00"
             const rawShowTime = entry.showTime.showTime;
-            let showTimeStr;
+            let showTimeStr = rawShowTime;
 
-            if (rawShowTime.includes(" ")) {
-                // Format: "2023-10-05 10:00:00" - split and take time part
-                showTimeStr = rawShowTime.split(" ")[1];
-            } else {
-                // Format: "14:00" - use as is
-                showTimeStr = rawShowTime;
-            }
+            // if (rawShowTime.includes(" ")) {
+            //     // Format: "2023-10-05 10:00:00" - split and take time part
+            //     showTimeStr = rawShowTime.split(" ")[1];
+            // } else {
+            //     // Format: "14:00" - use as is
+            //     showTimeStr = rawShowTime;
+            // }
 
 
-            if (!showTimeStr) return false;
-            const [hours, minutes] = showTimeStr.split(":").map(Number);
-            const showTime = new Date();
-            showTime.setHours(hours, minutes);
+            // if (!showTimeStr) return false;
+            // const [hours, minutes] = showTimeStr.split(":").map(Number);
+            // const showTime = new Date();
+            // showTime.setHours(hours, minutes);
             return (
-                !isNaN(showTime.getTime()) &&
-                showTime.toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                }) === timing
+                showTimeStr === timing
             );
         });
 
@@ -283,9 +279,9 @@ const Home = () => {
                                     key={`${dateObj.date}-${dateObj.month}-${dateObj.year}`}
                                     onClick={() => setSelectedDate(dateObj.dateObj)}
                                     className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-all flex flex-col items-center ${selectedDate.toDateString() ===
-                                            dateObj.dateObj.toDateString()
-                                            ? "bg-orange-500 text-white"
-                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        dateObj.dateObj.toDateString()
+                                        ? "bg-orange-500 text-white"
+                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                         }`}
                                 >
                                     <div className="text-xs">{dateObj.day}</div>

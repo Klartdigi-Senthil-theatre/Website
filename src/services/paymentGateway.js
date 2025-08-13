@@ -29,7 +29,7 @@ export const generateHash = (data) => {
     "|" +
     "|";
   //   hashstring += "|" + this.config.salt;
-  hashstring += "|" + "WYZ2OVE1AU";
+  hashstring += "|" + "WQ97KS3JPM";
   return sha512.sha512(hashstring);
 };
 
@@ -39,7 +39,7 @@ export const getAccessKey = async (data, onSuccess, onFailure) => {
   try {
     const txnid = Math.floor(100000 + Math.random() * 900000).toString();
     const form = {
-      key: "Z9NHVY7G41",
+      key: "BTY3RQ697R",
       txnid: txnid,
       amount: data.amount,
       email: data.email,

@@ -290,10 +290,18 @@ const SeatSelection = () => {
                       ({selectedSeats.length}) x ₹{price || 0}
                     </span>
                   </div>
+                  <div>
+                    <span className="text-gray-600 font-semibold">
+                      Convinience Fee per seat:
+                    </span>
+                    <span className="ml-2 text-orange-600 block">
+                      ({selectedSeats.length}) x ₹{20}
+                    </span>
+                  </div>
                   <div className="pt-2 border-t border-gray-200">
                     <span className="text-gray-600 font-semibold">Total:</span>
                     <span className="ml-2 text-orange-600 text-xl font-bold block">
-                      ₹{selectedSeats.length * (price || 0)}
+                      ₹{selectedSeats.length * (price + 20) || 0}
                     </span>
                   </div>
                 </div>

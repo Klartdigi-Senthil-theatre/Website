@@ -252,7 +252,11 @@ const SeatSelection = () => {
                   <div>
                     <span className="text-gray-600 font-semibold">Date:</span>
                     <span className="ml-2 text-orange-600 block">
-                      {date || "Unknown"}
+                      {date ? new Date(date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      }) : "Unknown"}
                     </span>
                   </div>
                   <div>

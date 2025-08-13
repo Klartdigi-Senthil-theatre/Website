@@ -252,8 +252,9 @@ THEATRE: Senthil Cinema
 * Customer: ${userDetails?.name}
 
 💰 PAYMENT SUMMARY:
-* Total Amount: ₹${totalPrice}
+* Total Amount: ₹${totalPrice + (selectedSeats?.length * 20)}
 * Seats: ${selectedSeats?.length} × ₹${pricePerSeat.toFixed(2)}
+* Convenience Fee: ${selectedSeats?.length} × ₹20
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━
 📱 IMPORTANT NOTES:

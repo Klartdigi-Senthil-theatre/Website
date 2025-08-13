@@ -474,8 +474,11 @@ THEATRE: Senthil Cinema
                             ₹{totalPrice}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {selectedSeats?.length} seat(s) × ₹
+                            Ticket price: {selectedSeats?.length} × ₹
                             {pricePerSeat.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Convinience Fee: {selectedSeats?.length} × ₹20
                           </div>
                         </div>
                       </motion.div>

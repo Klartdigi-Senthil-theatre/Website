@@ -89,9 +89,10 @@ export const initiatePayment = async (
       iframe: true,
       onResponse: async (response) => {
         if (response.status == "success") {
+          let booking;
           try {
             console.log(response);
-            const booking = await api.post("/movie-seat-bookings", {
+            booking = await api.post("/movie-seat-bookings", {
               movieId: data?.movieId ?? "",
               userId: data?.userId ?? "",
               showTimePlannerId: data?.showTimePlannerId ?? "",
@@ -112,7 +113,7 @@ export const initiatePayment = async (
             onFailure?.("Booking API error");
           }
 
-          onSuccess?.(response);
+          onSuccess?.(response,booking.data.id);
         } else {
           this.snackBar.open(
             `Payment failed, Reason: "${response.error_Message}". Please try again.`,

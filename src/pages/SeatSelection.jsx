@@ -123,7 +123,7 @@ const SeatSelection = () => {
     e.preventDefault();
     setShowUserDetails(false);
     setPaymentLoading(true);
-    const totalPrice = selectedSeats.length * price;
+    const totalPrice = (selectedSeats.length * price) + (selectedSeats.length * 20); // Assuming a fixed convenience fee of ₹20 per seat
     setFormData((prev) => ({ ...prev, totalPrice }));
 
     try {
@@ -148,9 +148,10 @@ const SeatSelection = () => {
           selectedSeats: selectedSeats,
         },
         // Success callback
-        () => {
+        (response,bookingId) => {
+          console.log("Access key received:", response);
           setPaymentLoading(false);
-          handlePaymentComplete();
+          handlePaymentComplete(bookingId);
         },
         // Failure callback
         (errorMsg) => {
@@ -165,7 +166,7 @@ const SeatSelection = () => {
     }
   };
 
-  const handlePaymentComplete = () => {
+  const handlePaymentComplete = (bookingId) => {
     navigate("/get-tickets", {
       state: {
         movie,
@@ -176,6 +177,7 @@ const SeatSelection = () => {
         userDetails: formData,
         showTimeId,
         showTimePlannerId,
+        bookingId, // Add the booking ID to the state
       },
     });
   };

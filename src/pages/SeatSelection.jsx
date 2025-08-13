@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavigationButtons from "../components/NavigationButtons";
+import Notification, { notify } from "../components/Notification";
 import SeatLayout from "../components/SeatLayout";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
@@ -107,10 +108,14 @@ const SeatSelection = () => {
       setCurrentSessionHolds(selectedSeats);
       setShowUserDetails(true);
     } catch (err) {
-      setError("Failed to hold seats. Some seats may have been taken.");
-      // Refresh seat availability on error
-      fetchBookedSeats();
+      // Show toast notification
+      notify.error("Oops! The seats you selected have just been booked by someone else. Please select different seats.");
       console.error("Seat hold error:", err);
+      // Clear selected seats and session holds
+      setSelectedSeats([]);
+      setCurrentSessionHolds([]);
+      // Fetch updated seat availability
+      fetchBookedSeats();
     }
   };
 
@@ -148,7 +153,7 @@ const SeatSelection = () => {
           selectedSeats: selectedSeats,
         },
         // Success callback
-        (response,bookingId) => {
+        (response, bookingId) => {
           console.log("Access key received:", response);
           setPaymentLoading(false);
           handlePaymentComplete(bookingId);
@@ -189,6 +194,7 @@ const SeatSelection = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-orange-100 pt-2 px-4">
+      <Notification />
       <NavigationButtons showHome={true} showBack={true} />
 
       <motion.div
@@ -311,11 +317,10 @@ const SeatSelection = () => {
                 </div>
 
                 <motion.button
-                  className={`w-full mt-6 py-2 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${
-                    selectedSeats.length === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-orange-600 hover:bg-orange-700"
-                  }`}
+                  className={`w-full mt-6 py-2 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${selectedSeats.length === 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-orange-600 hover:bg-orange-700"
+                    }`}
                   onClick={handleProceed}
                   disabled={selectedSeats.length === 0}
                   whileHover={selectedSeats.length > 0 ? { scale: 1.03 } : {}}

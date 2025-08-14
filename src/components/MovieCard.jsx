@@ -83,7 +83,7 @@ const MovieCard = ({ movie, onBookNow, selectedDate }) => {
                   key={index}
                   className={`w-full py-2 rounded-lg text-sm font-medium transition-all shadow-sm ${
                     isPassed
-                      ? "bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300 text-gray-400 cursor-not-allowed opacity-75"
+                      ? "bg-white text-gray-500 cursor-not-allowed opacity-50"
                       : "bg-white border border-orange-500 text-orange-600 hover:bg-orange-50"
                   }`}
                   onClick={() => !isPassed && onBookNow(movie.id, timing)}

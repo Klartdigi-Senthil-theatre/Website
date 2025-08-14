@@ -51,7 +51,7 @@ const UserDetailsDialog = ({
 
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="font-medium text-orange-900">
-              Email:
+              Email (Optional):
             </label>
             <input
               type="email"
@@ -60,7 +60,6 @@ const UserDetailsDialog = ({
               value={formData.email}
               onChange={handleChange}
               className="p-2 border-2 border-orange-200 rounded-lg focus:border-orange-500"
-              required
             />
           </div>
 

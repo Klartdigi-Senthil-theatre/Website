@@ -131,10 +131,13 @@ const SeatSelection = () => {
     const totalPrice = (selectedSeats.length * price) + (selectedSeats.length * 20); // Assuming a fixed convenience fee of ₹20 per seat
     setFormData((prev) => ({ ...prev, totalPrice }));
 
+    // Set default email if user didn't provide one (required for Easebuzz)
+    const emailForPayment = formData.email.trim() || 'senthilcinema@klartdigi.com';
+
     try {
       const createUser = await api.post("/users", {
         name: formData.name,
-        emailId: formData.email,
+        emailId: formData.email || null, // Store actual user input (can be empty)
         phoneNumber: formData.mobile,
       });
 
@@ -143,7 +146,7 @@ const SeatSelection = () => {
       getAccessKey(
         {
           amount: totalPrice,
-          email: formData.email,
+          email: emailForPayment, // Use default email for Easebuzz if user didn't provide one
           name: formData.name,
           phone: formData.mobile,
           userId: userId,

@@ -14,6 +14,8 @@ const SeatSelection = () => {
   const { movie, timing, date, price, showTimeId, showTimePlannerId } =
     location.state || {};
 
+  const staticDisabledSeats = ["R13", "R14", "R15"];
+
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]);
   const [currentSessionHolds, setCurrentSessionHolds] = useState([]);
@@ -109,7 +111,9 @@ const SeatSelection = () => {
       setShowUserDetails(true);
     } catch (err) {
       // Show toast notification
-      notify.error("Oops! The seats you selected have just been booked by someone else. Please select different seats.");
+      notify.error(
+        "Oops! The seats you selected have just been booked by someone else. Please select different seats."
+      );
       console.error("Seat hold error:", err);
       // Clear selected seats and session holds
       setSelectedSeats([]);
@@ -120,19 +124,21 @@ const SeatSelection = () => {
   };
 
   // Calculate disabled seats (excluding current session holds)
-  const disabledSeats = bookedSeats.filter(
-    (seat) => !currentSessionHolds.includes(seat)
-  );
+  const disabledSeats = [
+    ...staticDisabledSeats,
+    ...bookedSeats.filter(seat => !currentSessionHolds.includes(seat))
+  ];
 
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
     setShowUserDetails(false);
     setPaymentLoading(true);
-    const totalPrice = (selectedSeats.length * price) + (selectedSeats.length * 20); // Assuming a fixed convenience fee of ₹20 per seat
+    const totalPrice = selectedSeats.length * price + selectedSeats.length * 20; // Assuming a fixed convenience fee of ₹20 per seat
     setFormData((prev) => ({ ...prev, totalPrice }));
 
     // Set default email if user didn't provide one (required for Easebuzz)
-    const emailForPayment = formData.email.trim() || 'senthilcinema@klartdigi.com';
+    const emailForPayment =
+      formData.email.trim() || "senthilcinema@klartdigi.com";
 
     try {
       const createUser = await api.post("/users", {
@@ -261,11 +267,13 @@ const SeatSelection = () => {
                   <div>
                     <span className="text-gray-600 font-semibold">Date:</span>
                     <span className="ml-2 text-orange-600 block">
-                      {date ? new Date(date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                      }) : "Unknown"}
+                      {date
+                        ? new Date(date).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : "Unknown"}
                     </span>
                   </div>
                   <div>
@@ -320,10 +328,11 @@ const SeatSelection = () => {
                 </div>
 
                 <motion.button
-                  className={`w-full mt-6 py-2 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${selectedSeats.length === 0
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-orange-600 hover:bg-orange-700"
-                    }`}
+                  className={`w-full mt-6 py-2 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${
+                    selectedSeats.length === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-orange-600 hover:bg-orange-700"
+                  }`}
                   onClick={handleProceed}
                   disabled={selectedSeats.length === 0}
                   whileHover={selectedSeats.length > 0 ? { scale: 1.03 } : {}}

@@ -55,7 +55,7 @@ const SeatLayout = ({
                 <div className="flex items-center">
                   <div className="w-6 text-center"></div>{" "}
                   {/* left row label space */}
-                  <div className="w-10 h-6 rotate-90 flex items-center justify-center rounded text-[8px] tracking-wide font-bold text-gray-600">
+                  <div className="w-10 h-4 rotate-0 flex items-center justify-center rounded text-[10px] tracking-wide font-bold text-gray-600">
                     ENTRY
                   </div>
                 </div>
@@ -65,7 +65,7 @@ const SeatLayout = ({
 
                 {/* EXIT at right */}
                 <div className="flex items-center">
-                  <div className="w-10 h-6 -rotate-90 flex items-center justify-center rounded text-[8px] tracking-wide font-bold text-gray-600">
+                  <div className="w-10 h-4 -rotate-0 flex items-center justify-center rounded text-[10px] tracking-wide font-bold text-gray-600">
                     EXIT
                   </div>
                   <div className="w-6 text-center"></div>{" "}

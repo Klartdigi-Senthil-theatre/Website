@@ -105,8 +105,10 @@ export const initiatePayment = async (
               paymentMode: response["card_type"] ?? "Card",
               easePayId: response["easepayid"] ?? "12345",
               amount: data.amount ?? 0,
-              UDF1: data.userId != null ? `${data.userId}` : "",
-              UDF2: data.phone ?? "",
+              // UDF1: data.userId != null ? `${data.userId}` : "",
+              // UDF2: data.phone ?? "",
+              UDF1: data.showTimePlannerId != null ? `Show - ${data.showTimePlannerId}` : "",
+              UDF2: data.userId != null ? `User ID - ${data.userId}` : "",
             });
           } catch (error) {
             console.error("Booking API error:", error);

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavigationButtons from "../components/NavigationButtons";
+import Notification, { notify } from "../components/Notification";
 import SeatLayout from "../components/SeatLayout";
 import UserDetailsDialog from "../dialog/UserDetailsDialog";
 import api from "../services/api";
@@ -12,6 +13,8 @@ const SeatSelection = () => {
   const navigate = useNavigate();
   const { movie, timing, date, price, showTimeId, showTimePlannerId } =
     location.state || {};
+
+  const staticDisabledSeats = ["R13", "R14", "R15"];
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]);
@@ -107,29 +110,40 @@ const SeatSelection = () => {
       setCurrentSessionHolds(selectedSeats);
       setShowUserDetails(true);
     } catch (err) {
-      setError("Failed to hold seats. Some seats may have been taken.");
-      // Refresh seat availability on error
-      fetchBookedSeats();
+      // Show toast notification
+      notify.error(
+        "Oops! The seats you selected have just been booked by someone else. Please select different seats."
+      );
       console.error("Seat hold error:", err);
+      // Clear selected seats and session holds
+      setSelectedSeats([]);
+      setCurrentSessionHolds([]);
+      // Fetch updated seat availability
+      fetchBookedSeats();
     }
   };
 
   // Calculate disabled seats (excluding current session holds)
-  const disabledSeats = bookedSeats.filter(
-    (seat) => !currentSessionHolds.includes(seat)
-  );
+  const disabledSeats = [
+    ...staticDisabledSeats,
+    ...bookedSeats.filter(seat => !currentSessionHolds.includes(seat))
+  ];
 
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
     setShowUserDetails(false);
     setPaymentLoading(true);
-    const totalPrice = selectedSeats.length * price;
+    const totalPrice = selectedSeats.length * price + selectedSeats.length * 20; // Assuming a fixed convenience fee of ₹20 per seat
     setFormData((prev) => ({ ...prev, totalPrice }));
+
+    // Set default email if user didn't provide one (required for Easebuzz)
+    const emailForPayment =
+      formData.email.trim() || "senthilcinema@klartdigi.com";
 
     try {
       const createUser = await api.post("/users", {
         name: formData.name,
-        emailId: formData.email,
+        emailId: formData.email || null, // Store actual user input (can be empty)
         phoneNumber: formData.mobile,
       });
 
@@ -138,7 +152,7 @@ const SeatSelection = () => {
       getAccessKey(
         {
           amount: totalPrice,
-          email: formData.email,
+          email: emailForPayment, // Use default email for Easebuzz if user didn't provide one
           name: formData.name,
           phone: formData.mobile,
           userId: userId,
@@ -148,9 +162,10 @@ const SeatSelection = () => {
           selectedSeats: selectedSeats,
         },
         // Success callback
-        () => {
+        (response, bookingId) => {
+          console.log("Access key received:", response);
           setPaymentLoading(false);
-          handlePaymentComplete();
+          handlePaymentComplete(bookingId);
         },
         // Failure callback
         (errorMsg) => {
@@ -165,7 +180,7 @@ const SeatSelection = () => {
     }
   };
 
-  const handlePaymentComplete = () => {
+  const handlePaymentComplete = (bookingId) => {
     navigate("/get-tickets", {
       state: {
         movie,
@@ -176,6 +191,7 @@ const SeatSelection = () => {
         userDetails: formData,
         showTimeId,
         showTimePlannerId,
+        bookingId, // Add the booking ID to the state
       },
     });
   };
@@ -187,6 +203,7 @@ const SeatSelection = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-orange-100 pt-2 px-4">
+      <Notification />
       <NavigationButtons showHome={true} showBack={true} />
 
       <motion.div
@@ -250,7 +267,13 @@ const SeatSelection = () => {
                   <div>
                     <span className="text-gray-600 font-semibold">Date:</span>
                     <span className="ml-2 text-orange-600 block">
-                      {date || "Unknown"}
+                      {date
+                        ? new Date(date).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : "Unknown"}
                     </span>
                   </div>
                   <div>
@@ -288,10 +311,18 @@ const SeatSelection = () => {
                       ({selectedSeats.length}) x ₹{price || 0}
                     </span>
                   </div>
+                  <div>
+                    <span className="text-gray-600 font-semibold">
+                      Convinience Fee per seat:
+                    </span>
+                    <span className="ml-2 text-orange-600 block">
+                      ({selectedSeats.length}) x ₹{20}
+                    </span>
+                  </div>
                   <div className="pt-2 border-t border-gray-200">
                     <span className="text-gray-600 font-semibold">Total:</span>
                     <span className="ml-2 text-orange-600 text-xl font-bold block">
-                      ₹{selectedSeats.length * (price || 0)}
+                      ₹{selectedSeats.length * (price + 20) || 0}
                     </span>
                   </div>
                 </div>

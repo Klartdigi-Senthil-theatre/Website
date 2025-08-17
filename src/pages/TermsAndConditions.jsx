@@ -49,6 +49,14 @@ const TermsAndConditions = () => (
       <p>By booking tickets through the Senthil Theatre Ticket Booking Application, you acknowledge that you have read, understood, and agreed to these Terms and Conditions.</p>
       <p><strong>IN WITNESS WHEREOF</strong>, the parties of this deed do solemnly declare that the terms and conditions stipulated herein are agreed upon. We sign this deed in the presence of witnesses attesting hereunder.</p>
     </div>
+    <div className="flex justify-center mt-8">
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow"
+        onClick={() => window.history.back()}
+      >
+        Back
+      </button>
+    </div>
   </div>
 );
 

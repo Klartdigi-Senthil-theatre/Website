@@ -1,5 +1,5 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "../pages/Home";
 import SeatSelection from "../pages/SeatSelection";
 import TicketPage from "../pages/TicketPage";
@@ -20,6 +20,17 @@ function App() {
           </Routes>
         </div>
         {/* <Footer /> */}
+          <div className="bg-gray-800 text-white text-center p-4">
+            <p>&copy; 2025 klartdigi. All rights reserved. Developed by Klartdigi.</p>
+            <p className="text-blue-500">
+              <Link 
+                to="/terms-and-conditions"
+                className="cursor-pointer hover:underline"
+              >
+                Terms & Conditions
+              </Link>
+            </p>
+          </div>
       </div>
     </Router>
   );

@@ -1,6 +1,6 @@
-import {useNavigate} from "react-router-dom";
-import {motion} from "framer-motion";
-import {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import AdvertisementCarousel from "../components/AdvertisementCarousel";
 import api from "../services/api";
@@ -40,9 +40,9 @@ const Home = () => {
             date.setDate(today.getDate() + i);
             dates.push({
                 dateObj: date,
-                day: date.toLocaleString("en-US", {weekday: "short"}),
+                day: date.toLocaleString("en-US", { weekday: "short" }),
                 date: date.getDate(),
-                month: date.toLocaleString("en-US", {month: "short"}),
+                month: date.toLocaleString("en-US", { month: "short" }),
                 year: date.getFullYear(),
             });
         }
@@ -103,32 +103,31 @@ const Home = () => {
 
                 // Handle both formats: "14:00" or "2023-10-05 10:00:00"
                 const rawShowTime = entry.showTime.showTime;
-                let showTimeStr;
-
-                if (rawShowTime.includes(" ")) {
-                    // Format: "2023-10-05 10:00:00" - split and take time part
-                    showTimeStr = rawShowTime.split(" ")[1];
-                } else {
-                    // Format: "14:00" - use as is
-                    showTimeStr = rawShowTime;
-                }
+                let showTimeStr = rawShowTime;
+                // if (rawShowTime.includes(" ")) {
+                //     // Format: "2023-10-05 10:00:00" - split and take time part
+                //     showTimeStr = rawShowTime.split(" ")[1];
+                // } else {
+                //     // Format: "14:00" - use as is
+                //     showTimeStr = rawShowTime;
+                // }
 
                 if (showTimeStr) {
-                    const [hours, minutes] = showTimeStr.split(":").map(Number);
-                    const showTime = new Date();
-                    showTime.setHours(hours, minutes);
-                    if (!isNaN(showTime.getTime())) {
-                        const timeString = showTime.toLocaleTimeString("en-US", {
-                            hour: "numeric",
-                            minute: "2-digit",
-                        });
-                        movie.timings.push(timeString);
-                        movie.prices.set(entry.showTimeId, entry.price);
-                    } else {
-                        console.warn(
-                            `Invalid showTime for showTimeId ${entry.showTimeId}: ${rawShowTime}`
-                        );
-                    }
+                    // const [hours, minutes] = showTimeStr.split(":").map(Number);
+                    // const showTime = new Date();
+                    // showTime.setHours(hours, minutes);
+                    // if (!isNaN(showTime.getTime())) {
+                    // const timeString = showTime.toLocaleTimeString("en-US", {
+                    //     hour: "numeric",
+                    //     minute: "2-digit",
+                    // });
+                    movie.timings.push(showTimeStr);
+                    movie.prices.set(entry.showTimeId, entry.price);
+                    // } else {
+                    //     console.warn(
+                    //         `Invalid showTime for showTimeId ${entry.showTimeId}: ${rawShowTime}`
+                    //     );
+                    // }
                 }
             });
 
@@ -191,27 +190,23 @@ const Home = () => {
 
             // Handle both formats: "14:00" or "2023-10-05 10:00:00"
             const rawShowTime = entry.showTime.showTime;
-            let showTimeStr;
+            let showTimeStr = rawShowTime;
 
-            if (rawShowTime.includes(" ")) {
-                // Format: "2023-10-05 10:00:00" - split and take time part
-                showTimeStr = rawShowTime.split(" ")[1];
-            } else {
-                // Format: "14:00" - use as is
-                showTimeStr = rawShowTime;
-            }
+            // if (rawShowTime.includes(" ")) {
+            //     // Format: "2023-10-05 10:00:00" - split and take time part
+            //     showTimeStr = rawShowTime.split(" ")[1];
+            // } else {
+            //     // Format: "14:00" - use as is
+            //     showTimeStr = rawShowTime;
+            // }
 
 
-            if (!showTimeStr) return false;
-            const [hours, minutes] = showTimeStr.split(":").map(Number);
-            const showTime = new Date();
-            showTime.setHours(hours, minutes);
+            // if (!showTimeStr) return false;
+            // const [hours, minutes] = showTimeStr.split(":").map(Number);
+            // const showTime = new Date();
+            // showTime.setHours(hours, minutes);
             return (
-                !isNaN(showTime.getTime()) &&
-                showTime.toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                }) === timing
+                showTimeStr === timing
             );
         });
 
@@ -241,7 +236,7 @@ const Home = () => {
 
     // Animation variants
     const container = {
-        hidden: {opacity: 0},
+        hidden: { opacity: 0 },
         show: {
             opacity: 1,
             transition: {
@@ -252,14 +247,13 @@ const Home = () => {
 
     return (
         <div
-            className={`min-h-screen bg-gradient-to-b from-gray-100 to-orange-200 transition-colors duration-300 ${
-                isHovering ? "bg-orange-100" : "bg-white"
-            }`}
+            className={`min-h-screen bg-gradient-to-b from-gray-100 to-orange-200 transition-colors duration-300 ${isHovering ? "bg-orange-100" : "bg-white"
+                }`}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
         >
             {/* Advertisement Carousel */}
-            <AdvertisementCarousel/>
+            <AdvertisementCarousel />
 
             {/* Date Selection - Left Aligned */}
             <div className="max-w-7xl mx-auto px-1 pt-2">
@@ -272,10 +266,10 @@ const Home = () => {
                             {/* Month and Year Display - Stacked */}
                             <div className="flex flex-col items-center shrink-0 justify-center">
                                 <h3 className="text-sm text-orange-500 font-semibold">
-                                    {selectedDate.toLocaleString("default", {month: "long"})}
+                                    {selectedDate.toLocaleString("default", { month: "long" })}
                                 </h3>
                                 <h3 className="text-lg font-semibold">
-                                    {selectedDate.toLocaleString("default", {year: "numeric"})}
+                                    {selectedDate.toLocaleString("default", { year: "numeric" })}
                                 </h3>
                             </div>
 
@@ -284,12 +278,11 @@ const Home = () => {
                                 <button
                                     key={`${dateObj.date}-${dateObj.month}-${dateObj.year}`}
                                     onClick={() => setSelectedDate(dateObj.dateObj)}
-                                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-all flex flex-col items-center ${
-                                        selectedDate.toDateString() ===
+                                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-all flex flex-col items-center ${selectedDate.toDateString() ===
                                         dateObj.dateObj.toDateString()
-                                            ? "bg-orange-500 text-white"
-                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }`}
+                                        ? "bg-orange-500 text-white"
+                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        }`}
                                 >
                                     <div className="text-xs">{dateObj.day}</div>
                                     <div className="font-bold">{dateObj.date}</div>
@@ -321,8 +314,8 @@ const Home = () => {
                             <motion.div
                                 key={movie.id}
                                 variants={{
-                                    hidden: {opacity: 0, y: 20},
-                                    show: {opacity: 1, y: 0},
+                                    hidden: { opacity: 0, y: 20 },
+                                    show: { opacity: 1, y: 0 },
                                 }}
                                 className="w-full"
                             >

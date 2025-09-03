@@ -147,7 +147,7 @@ export const initiatePayment = async (
       theme: "#123456", // color hex
     };
 
-    new window.EasebuzzCheckout("Z9NHVY7G41", "prod").initiatePayment(options);
+    new window.EasebuzzCheckout("BTY3RQ697R", "prod").initiatePayment(options);
   } catch (err) {
     onFailure?.("Payment initialization failed");
     console.error("Payment init error:", err);

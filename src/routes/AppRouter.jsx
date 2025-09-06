@@ -11,6 +11,11 @@ function App() {
     <Router>
       <Notification />
       <div className="flex flex-col min-h-screen">
+        {/* Header */}
+        <div className="text-center py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+          <h1 className="text-lg font-semibold">Senthil Theater, Kattuputhur</h1>
+        </div>
+        
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />

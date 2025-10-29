@@ -261,7 +261,7 @@ const Home = () => {
                     {/* Date Selection */}
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center overflow-x-auto pb-2 scrollbar-hide space-x-4">
-                            <h3 className="text-md font-medium">Show Date:</h3>
+                            <h3 className="text-md font-medium m-3">Show Date:</h3>
 
                             {/* Month and Year Display - Stacked */}
                             <div className="flex flex-col items-center shrink-0 justify-center">

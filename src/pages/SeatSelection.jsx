@@ -249,7 +249,7 @@ const SeatSelection = () => {
             {/* Right Side - Booking Summary */}
             <div className="lg:w-1/3 mb-4">
               <motion.div
-                className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-[50vh] lg:h-[84vh] flex flex-col"
+                className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 lg:h-[120vh] md:h-[110vh] flex flex-col"
                 initial={{ y: 50 }}
                 animate={{ y: 0 }}
                 whileHover={{ scale: 1.01 }}
@@ -257,7 +257,7 @@ const SeatSelection = () => {
                 <h3 className="text-xl font-semibold text-orange-600 mb-4">
                   Booking Summary
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div>
                     <span className="text-gray-600 font-semibold">Movie:</span>
                     <span className="ml-2 text-orange-600 block">

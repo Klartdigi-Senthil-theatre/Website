@@ -149,6 +149,25 @@ const SeatSelection = () => {
 
       const userId = createUser.data.id;
 
+      const validateResponse = await api.post("/movie-seat-bookings/validate", {
+        movieId: movie.id,
+        showTimePlannerId: showTimePlannerId,
+        date: date,
+        bookingSeats: selectedSeats,
+      });
+
+      if (!validateResponse.data?.available) {
+        notify.error(
+          validateResponse.data?.message ||
+            "Selected seats are no longer available. Please choose different seats."
+        );
+        setSelectedSeats([]);
+        setCurrentSessionHolds([]);
+        fetchBookedSeats();
+        setPaymentLoading(false);
+        return;
+      }
+
       getAccessKey(
         {
           amount: totalPrice,
@@ -174,9 +193,13 @@ const SeatSelection = () => {
         }
       );
     } catch (err) {
-      setError("Failed to create user");
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Unable to proceed with booking. Please try again.";
+      notify.error(message);
       setPaymentLoading(false);
-      console.error("User creation error:", err);
+      console.error("Booking submission error:", err);
     }
   };
 

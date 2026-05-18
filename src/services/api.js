@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://theatre-app-backend-api-fuarhje3aceffkcu.centralindia-01.azurewebsites.net/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 export default api;

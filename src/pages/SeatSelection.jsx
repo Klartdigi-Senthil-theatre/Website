@@ -225,7 +225,7 @@ const SeatSelection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-orange-100 pt-2 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-orange-100 pt-2 px-4 pb-8">
       <Notification />
       <NavigationButtons showHome={true} showBack={true} />
 
@@ -244,7 +244,7 @@ const SeatSelection = () => {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-10">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
             {/* Left Side - Seat Selection */}
             <div className="lg:w-2/3">
               {/* Seat Layout */}
@@ -270,9 +270,9 @@ const SeatSelection = () => {
             </div>
 
             {/* Right Side - Booking Summary */}
-            <div className="lg:w-1/3 mb-4">
+            <div className="w-full lg:w-1/3 mb-4 shrink-0">
               <motion.div
-                className="sticky top-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 h-[50vh] lg:h-[84vh] flex flex-col"
+                className="p-6 bg-white bg-opacity-90 rounded-xl shadow-lg border border-orange-200 flex flex-col lg:sticky lg:top-4 lg:h-[84vh] lg:overflow-y-auto lg:overscroll-contain"
                 initial={{ y: 50 }}
                 animate={{ y: 0 }}
                 whileHover={{ scale: 1.01 }}

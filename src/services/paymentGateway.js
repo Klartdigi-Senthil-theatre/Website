@@ -54,7 +54,7 @@ export const getAccessKey = async (data, onSuccess, onFailure) => {
       udf3: `Phone Number - ${data?.phone}`,
       udf4: `MovieID - ${data?.movieId}`,
       udf5: `selectedSeats - ${data?.selectedSeats?.join(',')}`,
-      udf6: formatDateYMD(data?.date),
+      udf6: String(data?.date || "").slice(0, 10),
       productinfo: "Book Ticket",
       furl: "https://theatre-app-backend-api-fuarhje3aceffkcu.centralindia-01.azurewebsites.net/api/payments/easepay/failure-callback",
       surl: "https://theatre-app-backend-api-fuarhje3aceffkcu.centralindia-01.azurewebsites.net/api/payments/easepay/callback",
@@ -79,15 +79,6 @@ export const getAccessKey = async (data, onSuccess, onFailure) => {
     onFailure?.("Network error");
     console.error("Access key error:", err);
   }
-};
-
-const formatDateYMD = (input) => {
-  const d = new Date(input);
-  if (Number.isNaN(d.getTime())) return ""; // fallback if invalid
-  const y = d.getUTCFullYear();                 // use UTC to avoid TZ shifts
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
 };
 
 export const initiatePayment = async (

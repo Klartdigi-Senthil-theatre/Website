@@ -55,7 +55,6 @@ const Home = () => {
     const fetchShowtimePlanner = async () => {
         try {
             setLoading(true);
-            // Format selectedDate as YYYY-MM-DD in IST
             const formattedDate = selectedDate
                 .toLocaleDateString("en-CA", {
                     timeZone: "Asia/Kolkata",
@@ -65,7 +64,7 @@ const Home = () => {
                 })
                 .split("/")
                 .reverse()
-                .join("-"); // e.g., "2025-08-07"
+                .join("-");
 
             const response = await api.get(
                 `/show-time-planner/date/${formattedDate}`
@@ -226,7 +225,7 @@ const Home = () => {
             state: {
                 movie: selectedMovie,
                 timing,
-                date: selectedDate.toISOString(),
+                date: showTimeEntry.date,
                 price: showTimeEntry.price,
                 showTimeId: showTimeEntry.showTimeId,
                 showTimePlannerId: showTimeEntry.id,

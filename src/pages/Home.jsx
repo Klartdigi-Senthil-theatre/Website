@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import AdvertisementCarousel from "../components/AdvertisementCarousel";
+import { notify } from "../components/Notification";
 import api from "../services/api";
 
 const Home = () => {
@@ -213,6 +214,25 @@ const Home = () => {
             console.error(
                 `No showtime found for movieId ${movieId} and timing ${timing}`
             );
+            return;
+        }
+
+        try {
+            const { data } = await api.get(
+                `/show-time-planner/${showTimeEntry.id}/check-time`
+            );
+
+            if (data.timeCrossed || !data.available) {
+                notify.error(
+                    "This showtime is no longer available. Please choose another time."
+                );
+                await fetchShowtimePlanner();
+                return;
+            }
+        } catch (err) {
+            console.error("Showtime check failed:", err);
+            notify.error("Unable to verify showtime. Please try again.");
+            await fetchShowtimePlanner();
             return;
         }
 

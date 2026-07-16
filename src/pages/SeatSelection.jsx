@@ -55,12 +55,18 @@ const SeatSelection = () => {
       setBookedSeats([...booked, ...held]);
       setLoading(false);
     } catch (err) {
+      const message = err?.response?.data?.error;
+      if (message === "Time crossed") {
+        notify.error("This showtime is no longer available. Please choose another time.");
+        navigate("/");
+        return;
+      }
       setError("Failed to fetch booked seats");
       setBookedSeats([]);
       setLoading(false);
       console.error("Fetch booked seats error:", err);
     }
-  }, [showTimePlannerId]);
+  }, [showTimePlannerId, navigate]);
 
   useEffect(() => {
     fetchBookedSeats();
@@ -110,15 +116,18 @@ const SeatSelection = () => {
       setCurrentSessionHolds(selectedSeats);
       setShowUserDetails(true);
     } catch (err) {
-      // Show toast notification
+      const message = err?.response?.data?.error;
+      if (message === "Time crossed") {
+        notify.error("This showtime is no longer available. Please choose another time.");
+        navigate("/");
+        return;
+      }
       notify.error(
         "Oops! The seats you selected have just been booked by someone else. Please select different seats."
       );
       console.error("Seat hold error:", err);
-      // Clear selected seats and session holds
       setSelectedSeats([]);
       setCurrentSessionHolds([]);
-      // Fetch updated seat availability
       fetchBookedSeats();
     }
   };
@@ -149,24 +158,12 @@ const SeatSelection = () => {
 
       const userId = createUser.data.id;
 
-      const validateResponse = await api.post("/movie-seat-bookings/validate", {
+      await api.post("/movie-seat-bookings/validate", {
         movieId: movie.id,
         showTimePlannerId: showTimePlannerId,
         date: date,
         bookingSeats: selectedSeats,
       });
-
-      if (!validateResponse.data?.available) {
-        notify.error(
-          validateResponse.data?.message ||
-            "Selected seats are no longer available. Please choose different seats."
-        );
-        setSelectedSeats([]);
-        setCurrentSessionHolds([]);
-        fetchBookedSeats();
-        setPaymentLoading(false);
-        return;
-      }
 
       getAccessKey(
         {
@@ -194,10 +191,23 @@ const SeatSelection = () => {
       );
     } catch (err) {
       const message =
-        err.response?.data?.message ||
         err.response?.data?.error ||
+        err.response?.data?.message ||
         "Unable to proceed with booking. Please try again.";
-      notify.error(message);
+      notify.error(
+        message === "Time crossed"
+          ? "This showtime is no longer available. Please choose another time."
+          : message
+      );
+      if (message === "Time crossed") {
+        navigate("/");
+        return;
+      }
+      if (message.includes("already booked")) {
+        setSelectedSeats([]);
+        setCurrentSessionHolds([]);
+        fetchBookedSeats();
+      }
       setPaymentLoading(false);
       console.error("Booking submission error:", err);
     }

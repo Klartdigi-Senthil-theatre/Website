@@ -218,20 +218,17 @@ const Home = () => {
         }
 
         try {
-            const { data } = await api.get(
-                `/show-time-planner/${showTimeEntry.id}/check-time`
-            );
-
-            if (data.timeCrossed || !data.available) {
+            await api.get(`/show-time-planner/${showTimeEntry.id}/check-time`);
+        } catch (err) {
+            const message = err?.response?.data?.error;
+            if (message === "Time crossed") {
                 notify.error(
                     "This showtime is no longer available. Please choose another time."
                 );
-                await fetchShowtimePlanner();
-                return;
+            } else {
+                console.error("Showtime check failed:", err);
+                notify.error("Unable to verify showtime. Please try again.");
             }
-        } catch (err) {
-            console.error("Showtime check failed:", err);
-            notify.error("Unable to verify showtime. Please try again.");
             await fetchShowtimePlanner();
             return;
         }

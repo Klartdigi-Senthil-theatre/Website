@@ -244,6 +244,7 @@ const Home = () => {
                 timing,
                 date: showTimeEntry.date,
                 price: showTimeEntry.price,
+                onlineFeeCommission: showTimeEntry.onlineFeeCommission,
                 showTimeId: showTimeEntry.showTimeId,
                 showTimePlannerId: showTimeEntry.id,
             },

@@ -21,8 +21,12 @@ const TicketPage = () => {
   const navigate = useNavigate();
   const [showTicket, setShowTicket] = useState(false);
 
-  const { movie, timing, selectedSeats, totalPrice, userDetails, bookingId, date } =
+  const { movie, timing, selectedSeats, totalPrice, userDetails, bookingId, date, onlineFeeCommission: stateCommission } =
     location.state || {};
+
+  const onlineFeeCommission = stateCommission;
+  const convenienceFeeTotal = (selectedSeats?.length || 0) * onlineFeeCommission;
+  const grandTotal = (totalPrice || 0) + convenienceFeeTotal;
 
   // Calculate price per seat (assuming equal distribution for simplicity)
   const pricePerSeat = selectedSeats ? totalPrice / selectedSeats.length : 0;
@@ -252,9 +256,9 @@ THEATRE: Senthil Cinema
 * Customer: ${userDetails?.name}
 
 💰 PAYMENT SUMMARY:
-* Total Amount: ₹${totalPrice + (selectedSeats?.length * 20)}
+* Total Amount: ₹${grandTotal}
 * Seats: ${selectedSeats?.length} × ₹${pricePerSeat.toFixed(2)}
-* Convenience Fee: ${selectedSeats?.length} × ₹20
+* Convenience Fee: ${selectedSeats?.length} × ₹${onlineFeeCommission}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━
 📱 IMPORTANT NOTES:
@@ -472,14 +476,14 @@ THEATRE: Senthil Cinema
                             Total Amount
                           </div>
                           <div className="text-2xl font-bold text-orange-600">
-                            ₹{totalPrice}
+                            ₹{grandTotal}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
                             Ticket price: {selectedSeats?.length} × ₹
                             {pricePerSeat.toFixed(2)}
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            Convinience Fee: {selectedSeats?.length} × ₹20
+                            Convinience Fee: {selectedSeats?.length} × ₹{onlineFeeCommission}
                           </div>
                         </div>
                       </motion.div>

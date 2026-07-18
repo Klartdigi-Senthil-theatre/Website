@@ -11,7 +11,7 @@ import { getAccessKey } from "../services/paymentGateway";
 const SeatSelection = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { movie, timing, date, price, showTimeId, showTimePlannerId } =
+  const { movie, timing, date, price, showTimeId, showTimePlannerId, onlineFeeCommission } =
     location.state || {};
 
   const staticDisabledSeats = ["R13", "R14", "R15"];
@@ -43,7 +43,6 @@ const SeatSelection = () => {
         api.get(`/movie-seat-bookings/show-time-planner/${showTimePlannerId}`),
         api.get(`/movie-seat-holds/show-time-planner/${showTimePlannerId}`),
       ]);
-
       const booked = bookingsResponse.data.flatMap((booking) =>
         booking.seatNumber.map((seat) => seat.seatNo)
       );
@@ -95,7 +94,7 @@ const SeatSelection = () => {
     );
   };
   const handleProceed = async () => {
-    if (selectedSeats.length === 0) return;
+    if (selectedSeats.length === 0 || onlineFeeCommission == null) return;
 
     try {
       // Check if any selected seats are newly added (not in current holds)
@@ -142,7 +141,8 @@ const SeatSelection = () => {
     e.preventDefault();
     setShowUserDetails(false);
     setPaymentLoading(true);
-    const totalPrice = selectedSeats.length * price + selectedSeats.length * 20; // Assuming a fixed convenience fee of ₹20 per seat
+    const totalPrice =
+      selectedSeats.length * price + selectedSeats.length * onlineFeeCommission;
     setFormData((prev) => ({ ...prev, totalPrice }));
 
     // Set default email if user didn't provide one (required for Easebuzz)
@@ -224,6 +224,7 @@ const SeatSelection = () => {
         userDetails: formData,
         showTimeId,
         showTimePlannerId,
+        onlineFeeCommission,
         bookingId, // Add the booking ID to the state
       },
     });
@@ -349,27 +350,27 @@ const SeatSelection = () => {
                       Convinience Fee per seat:
                     </span>
                     <span className="ml-2 text-orange-600 block">
-                      ({selectedSeats.length}) x ₹{20}
+                      ({selectedSeats.length}) x ₹{onlineFeeCommission ?? "—"}
                     </span>
                   </div>
                   <div className="pt-2 border-t border-gray-200">
                     <span className="text-gray-600 font-semibold">Total:</span>
                     <span className="ml-2 text-orange-600 text-xl font-bold block">
-                      ₹{selectedSeats.length * (price + 20) || 0}
+                      ₹{onlineFeeCommission != null ? selectedSeats.length * (price + onlineFeeCommission) : "—"}
                     </span>
                   </div>
                 </div>
 
                 <motion.button
                   className={`w-full mt-6 py-2 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${
-                    selectedSeats.length === 0
+                    selectedSeats.length === 0 || onlineFeeCommission == null
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-orange-600 hover:bg-orange-700"
                   }`}
                   onClick={handleProceed}
-                  disabled={selectedSeats.length === 0}
-                  whileHover={selectedSeats.length > 0 ? { scale: 1.03 } : {}}
-                  whileTap={selectedSeats.length > 0 ? { scale: 0.98 } : {}}
+                  disabled={selectedSeats.length === 0 || onlineFeeCommission == null}
+                  whileHover={selectedSeats.length > 0 && onlineFeeCommission != null ? { scale: 1.03 } : {}}
+                  whileTap={selectedSeats.length > 0 && onlineFeeCommission != null ? { scale: 0.98 } : {}}
                 >
                   Proceed to Book
                 </motion.button>

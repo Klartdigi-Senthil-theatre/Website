@@ -50,21 +50,21 @@ const AdvertisementCarousel = () => {
 
   return (
     <div className="flex flex-col items-center px-4 py-6">
-      <div className="relative w-full max-w-7xl h-80 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-100">
+      <div className="relative w-full max-w-7xl h-80 overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-gray-900">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <p>Loading advertisements...</p>
+            <p className="text-white">Loading advertisements...</p>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-red-500">{error}</p>
+            <p className="text-red-400">{error}</p>
           </div>
         ) : (
           <>
             {ads.map((ad, index) => (
               <motion.div
                 key={index}
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 flex items-center justify-center w-full h-full"
                 initial={{ opacity: 0 }}
                 animate={{
                   opacity: index === currentAd ? 1 : 0,
@@ -74,9 +74,9 @@ const AdvertisementCarousel = () => {
                 <img
                   src={ad.image}
                   alt={ad.title}
-                  className="w-full h-full object-cover" // Changed to object-cover for better image scaling
+                  className="w-full h-full object-fill"
                   onError={(e) => {
-                    e.target.src = fallbackImage; // Fallback on image load error
+                    e.target.src = fallbackImage;
                   }}
                 />
               </motion.div>

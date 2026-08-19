@@ -21,6 +21,10 @@ jobs:
           username: ${{ secrets.HOSTINGER_VM_USERNAME }}
           key: ${{ secrets.HOSTINGER_VM_SSH_KEY }}
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use default
+            
             cd /root/Website
             git pull origin main
             npm ci
